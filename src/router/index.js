@@ -27,6 +27,34 @@ const routes = [
       },
     ],
   },
+  {
+    path: '/stats',
+    component: () => import('@/layouts/default/Default.vue'),
+    children: [
+      {
+        path: '',
+        name: 'Data',
+        component: () => import('@/views/Data.vue'),
+        meta: {
+          show_news_bar: false
+        }
+      },
+    ],
+  },
+  {
+    path: '/games/:id',
+    component: () => import('@/layouts/default/Default.vue'),
+    children: [
+      {
+        path: '',
+        name: 'Game',
+        component: () => import('@/views/Game.vue'),
+        meta: {
+          show_news_bar: false
+        }
+      },
+    ],
+  },
 ]
 
 const router = createRouter({

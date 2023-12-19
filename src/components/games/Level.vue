@@ -4,7 +4,7 @@
     color="blue"
     flat
   >
-    {{ level.name }}
+    <!-- {{ level.name }} -->
     <Regions
       v-if="level.regions && level.regions.length"
       :regions="level.regions"

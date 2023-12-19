@@ -1,7 +1,5 @@
 <template>
   <v-card style="padding: 20px; display: flex; justify-content: center;" flat>
-    <!-- {{ game_dates }}
-    {{ next_games }} -->
     <v-btn @click="previousDay()" class="mr-2">
       <v-icon>mdi-chevron-left</v-icon>
     </v-btn>
@@ -10,6 +8,7 @@
       <v-menu v-model="open" activator="parent" :close-on-content-click="false">
         <v-card max-width="600">
           <v-date-picker
+            :events="game_dates_formal"
             :model-value="date_formal"
             :month="month_index"
             @update:modelValue="setDateFormal($event); open = false;"
@@ -17,6 +16,8 @@
           >
           </v-date-picker>
         </v-card>
+        <!-- {{ date_formal }}
+        {{ game_dates_formal }} -->
       </v-menu>
     </v-btn>
     <v-btn @click="nextDay()" class="ml-2">
@@ -41,7 +42,9 @@ export default {
       'day',
       'pretty_date',
       'game_dates',
-      'next_games'
+      'next_games',
+      'previous_games',
+      'game_dates_formal'
     ])
   },
   methods: {

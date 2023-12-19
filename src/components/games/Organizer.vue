@@ -3,7 +3,6 @@
   <v-card
     flat
   >
-    {{ organizer.name }}
     <Level
       v-for="level in organizer.levels"
       :key="level.id + 'level'"

@@ -1,0 +1,98 @@
+<template>
+  <v-card flat class="my-3">
+    <div class="text-h4">
+      Data tilanteittain
+    </div>
+    <div style="text-align: center;" class="text-h6 mt-3">
+      {{ tilanne }}-tilanne
+    </div>
+    <v-sheet class="d-flex justify-center my-2">
+      <v-btn
+        class="ml-1"
+        rounded
+        size="small" 
+        :color="tilanne == til ? 'primary' : ''"
+        v-for="til in tilanteet" 
+        :key="til + 'tilanne'"
+        @click="tilanne = til"
+      >
+        {{ til }}
+      </v-btn>
+    </v-sheet>
+    <div class="my-3">
+      Lyöntejä tilanteessa
+      <v-chip class="ml-3">
+        {{ this.tilanne_events ? this.tilanne_events.length : 0 }}
+      </v-chip>
+    </div>
+    <div class="text-h5 mt-5">
+      Lyöntikartta
+    </div>
+    <hit-map :events="tilanne_events"></hit-map>
+    <div class="text-h5">
+      Lyönnin tyypit
+    </div>
+    <pie-chart
+      :data="pie_chart_data"
+      :key="tilanne"
+    ></pie-chart>
+  </v-card>
+</template>
+
+<script>
+import { mapGetters } from 'vuex'
+import PieChart from './PieChart.vue'
+import HitMap from '@/components/players/HitMap.vue'
+export default {
+  components: { PieChart, HitMap },
+  data: () => ({
+    tilanteet: ['0', '1', '1-2', 'Ajo'],
+    tilanne: '0'
+  }),
+  computed: {
+    ...mapGetters('players', [
+      'events'
+    ]),
+    tilanne_events() {
+      return this.events[this.tilanne]
+    },
+    pie_chart_data() {
+      if(!this.tilanne_events || !this.tilanne_events.length) return
+
+      let data = {}
+      this.tilanne_events.forEach(e => {
+        if(!e.tyyppi) return
+        else if(data[e.tyyppi]) data[e.tyyppi] = data[e.tyyppi] +  1
+        else data[e.tyyppi] = 1
+      })
+
+      const labels = Object.keys(data)
+      return {
+        labels,
+        datasets: [
+          {
+            data: labels.map(l => data[l]),
+            backgroundColor: [
+              '#77CEFF', // Light Blue
+              '#0079AF', // Dark Blue
+              '#123E6B', // Navy
+              '#97B0C4', // Slate Blue
+              '#A5C8ED', // Sky Blue
+              '#D4E4F2', // Pale Blue
+              '#3498db', // Dodger Blue
+              '#1f618d', // Dark Blue
+              '#5499C7', // Steel Blue
+              '#5DADE2', // Light Sky Blue
+              '#AED6F1', // Light Steel Blue
+              '#aed6f1', // Periwinkle
+              '#aed6f1', // Powder Blue
+              '#aed6f1', // Light Cyan
+              '#aed6f1'  // Light Slate Gray
+            ]
+          }
+        ]
+      }
+    }
+  }
+}
+</script>

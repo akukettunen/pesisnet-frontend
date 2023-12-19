@@ -1,15 +1,18 @@
-import store from './store/index.js'
+import store from './store/index.js';
+import './assets/sass/style.scss'
 
 // Plugins
 import { registerPlugins } from '@/plugins'
 
-// Components
-import App from './App.vue'
-
 // Composables
 import { createApp } from 'vue'
 
+// Components
+import App from './App.vue'
+import VueSelect from "vue-select";
+
 const app = createApp(App)
+  .component("vue-select", VueSelect)
 
 registerPlugins(app)
 

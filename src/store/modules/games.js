@@ -62,12 +62,24 @@ const games = {
       commit('SET_DATE', formatted_date_now)
     },
     nextDay({ getters, dispatch }) {
+      if(getters.next_games) {
+        let next = new Date(getters.next_games)
+        dispatch('setDateFormal', next)
+        return
+      }
+
       let tomorrow = getters.date_formal
-      tomorrow.setDate(tomorrow.getDate()+1);
+      tomorrow.setDate(tomorrow.getDate() + 1);
 
       dispatch('setDateFormal', tomorrow)
     },
     previousDay({ getters, dispatch }) {
+      if(getters.previous_games) {
+        let next = new Date(getters.previous_games)
+        dispatch('setDateFormal', next)
+        return
+      }
+
       let yesterday = getters.date_formal
       yesterday.setDate(yesterday.getDate() - 1);
 
@@ -91,6 +103,10 @@ const games = {
     date: state => state.date,
     loading_games: state => state.loading_games,
     game_dates: state => state.game_dates,
+    game_dates_formal: state => state.game_dates.map(d => {
+      const date = new Date(d)
+      return date
+    }),
     year: (state, getters) => {
       if(!getters.date) return null
       return getters.date.split('-')[0]
@@ -116,18 +132,40 @@ const games = {
     },
     next_games: (_, getters) => {
       let next = null
-      const [ c_year, c_month, c_day ] = getters.date
-      console.log([ c_year, c_month, c_day ])
+      const [ c_year, c_month, c_day ] = getters.date.split('-')
       
       getters.game_dates?.forEach(d => {
         const [ year, month, day ] = d.split('-')
-
-        if(!next && year >= c_year && month >= c_month && day > c_day) {
-          next = d
-        }
+        if(next) return
+        if(year > c_year) next = d
+        if(month > c_month && year == c_year) next = d
+        if(day > c_day && month == c_month && year == c_year) next = d
       })
 
       return next
+    },
+    previous_games: (_, getters) => {
+      if(!getters.game_dates) return
+
+      let next = null
+      const [ c_year, c_month, c_day ] = getters.date.split('-')
+      
+      const dates = [ ...getters.game_dates ]
+      dates.reverse().forEach(d => {
+        const [ year, month, day ] = d.split('-')
+        if(next) return
+        if(year < c_year) next = d
+        if(month < c_month && year == c_year) next = d
+        if(day < c_day && month == c_month && year == c_year) next = d
+      })
+
+      return next
+    },
+    pretty_day_from_date: () => (date) => {
+      const pretty = new Date(date)
+      const hours = pretty.getHours() > 9 ? pretty.getHours() : '0' + pretty.getHours()
+      const minutes = pretty.getMinutes() > 9 ? pretty.getMinutes() : '0' + pretty.getMinutes()
+      return hours + ':' + minutes
     }
   }
 }

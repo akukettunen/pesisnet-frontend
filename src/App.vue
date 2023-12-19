@@ -2,7 +2,7 @@
   <v-sheet fluid>
     <v-layout>
       <v-app-bar color="primary" name="app-bar" :elevation="$route.meta.show_news_bar ? '0' : '2'">
-        <v-app-bar-title style="flex-shrink: 1;">
+        <v-app-bar-title v-if="!$vuetify.display.mobile" style="flex-shrink: 1;">
           PesisNet
         </v-app-bar-title>
         <v-sheet color="primary" height="90%" class="mx-auto">
@@ -15,13 +15,15 @@
             :active="$route.path == btn.route"
             color="white"
             class="mr-3"
+            :class="{ 'px-4' : !$vuetify.display.mobile }"
+            :size="$vuetify.display.mobile ? 'x-small' : ''"
           >
             <v-icon :class="{'mr-3': !$vuetify.display.mobile}">{{ btn.icon }}</v-icon>
             {{ btn.text }}
           </v-btn>
         </v-sheet>
       </v-app-bar>
-      <v-app-bar :height="$vuetify.display.mobile ? '30' : '60'" v-if="$route.meta.show_news_bar">
+      <v-app-bar style="overflow-x: scroll;" :height="$vuetify.display.mobile ? '30' : '60'" v-if="$route.meta.show_news_bar">
         <v-btn 
           v-for="btn in news_buttons" 
           :active="btn.active"
@@ -35,7 +37,9 @@
             v-if="btn.tooltip"
             activator="parent"
             location="bottom"
-          >{{ btn.tooltip }}</v-tooltip>
+          >
+            {{ btn.tooltip }}
+          </v-tooltip>
         </v-btn>
       </v-app-bar>
       <router-view />
@@ -66,3 +70,14 @@ export default {
   })
 }
 </script>
+
+<style>
+.vs__dropdown-menu {
+  z-index: 999 !important;
+}
+
+.sport-font {
+  font-family: graduate;
+}
+
+</style>
