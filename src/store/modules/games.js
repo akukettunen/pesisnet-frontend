@@ -7,7 +7,8 @@ const games = {
     date_games: [],
     loading_games: false,
     date: null,
-    game_dates: null
+    game_dates: null,
+    getting_games_for_date: null
   }),
   mutations: {
     SET_DATE_GAMES(state, games) {
@@ -21,6 +22,9 @@ const games = {
     },
     SET_GAME_DATES(state, val) {
       state.game_dates = val
+    },
+    SET_GETTING_GAMES_FOR_DATE(state, val) {
+      state.getting_games_for_date = val
     }
   },
   actions: {
@@ -37,16 +41,21 @@ const games = {
       dispatch('getDateGames', ugly_date)
     },
     getDateGames({ commit, getters }, date) {
-      commit('SET_LOADING_GAMES', true)
       if(!date) date = getters.date
+
+      commit('SET_LOADING_GAMES', true)
+      commit('SET_GETTING_GAMES_FOR_DATE', date)
+
       a(`/games?date=${date}`)
         .then(e => {
+          if(date != getters.getting_games_for_date) return
           commit('SET_DATE_GAMES', e.data)
         })
         .catch(e => {
           alert(e)
         })
         .finally(() => {
+          if(date != getters.getting_games_for_date) return
           commit('SET_LOADING_GAMES', false)
         })
     },
@@ -102,6 +111,7 @@ const games = {
     date_games: state => state.date_games,
     date: state => state.date,
     loading_games: state => state.loading_games,
+    getting_games_for_date: state => state.getting_games_for_date,
     game_dates: state => state.game_dates,
     game_dates_formal: state => state.game_dates.map(d => {
       const date = new Date(d)
