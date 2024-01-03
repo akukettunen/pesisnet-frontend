@@ -1,0 +1,27 @@
+version: 0.2
+env:
+  variables:
+    BUILD_ENV: $BUILD_ENV
+phases:
+  install:
+    runtime-versions:
+      nodejs: 20
+    commands:
+      - echo Not installing Mocha...x
+  pre_build:
+    commands:
+      - echo Installing source NPM dependencies...
+      - npm install
+  build:
+    commands:
+      - echo Build started on `date`
+      - echo Builduing the vue app...
+      - npm run build
+  post_build:
+    commands:
+      - echo Build completed on `date`
+artifacts:
+  files:
+    - '**/*'
+  discard-paths: no
+  base-directory: 'dist'

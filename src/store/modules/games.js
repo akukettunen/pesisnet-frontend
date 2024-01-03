@@ -166,6 +166,10 @@ const games = {
       const hours = pretty.getHours() > 9 ? pretty.getHours() : '0' + pretty.getHours()
       const minutes = pretty.getMinutes() > 9 ? pretty.getMinutes() : '0' + pretty.getMinutes()
       return hours + ':' + minutes
+    },
+    get_runs: () => (ru) => {
+      if(ru[0] == null) return 0
+      return ru.reduce((a, b) => (a ? parseInt(a) : 0) + (b ? parseInt(b) : 0), 0)
     }
   }
 }

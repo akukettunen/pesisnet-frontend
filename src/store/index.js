@@ -1,14 +1,19 @@
 import { createStore } from 'vuex'
 
 import games from './modules/games.js'
+import game from './modules/game.js'
 import players from './modules/players.js'
+import data from './modules/data.js'
+
+import standings from './modules/data/standings.js'
 
 export default createStore({
-  state() {
-  },
   modules: {
     games,
-    players
+    game,
+    players,
+    data,
+    standings
   }
 })
 

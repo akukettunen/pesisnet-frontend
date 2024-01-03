@@ -1,0 +1,37 @@
+{ 
+  "id": 83755, 
+  "home": { "id": 12482, "name": "Alajärven Ankkurit", "shorthand": "AA", "temp": false, "sport_club_id": 481, "sport_club": { "city": "Alajärvi", "id": 481, "name": "Alajärven Ankkuritpesis", "shorthand": "AA", "url": "", "icon": "https://www.pesistulokset.fi/storage/seuralogot/d7fa8a642ac2cf09d6f7e7e5459226ff-icon.png", "logo": "https://www.pesistulokset.fi/storage/seuralogot/d7fa8a642ac2cf09d6f7e7e5459226ff.png" }, "url": "https://www.pesistulokset.fi:443/joukkue/ankkuritpesis/12482", "logo": "https://www.pesistulokset.fi/storage/seuralogot/d7fa8a642ac2cf09d6f7e7e5459226ff.png", "icon": "https://www.pesistulokset.fi/storage/seuralogot/d7fa8a642ac2cf09d6f7e7e5459226ff-icon.png" }, 
+  "away": { "id": 12483, "name": "Hyvinkään Tahko", "shorthand": "Tahko", "temp": false, "sport_club_id": 55, "sport_club": { "city": "Hyvinkää", "id": 55, "name": "Hyvinkään Tahko", "shorthand": "Tahko", "url": "", "icon": "https://www.pesistulokset.fi/storage/seuralogot/303de63b0eb054f446d39d31a56b50f9-1-icon.png", "logo": "https://www.pesistulokset.fi/storage/seuralogot/303de63b0eb054f446d39d31a56b50f9-1.png" }, "url": "https://www.pesistulokset.fi:443/joukkue/tahko/12483", "logo": "https://www.pesistulokset.fi/storage/seuralogot/303de63b0eb054f446d39d31a56b50f9-1.png", "icon": "https://www.pesistulokset.fi/storage/seuralogot/303de63b0eb054f446d39d31a56b50f9-1-icon.png" }, 
+  "date": "2023-12-28T17:00:00.000000Z", 
+  "stadium": { "id": 962, "name": "Kuopio-halli", "address": "Opistotie 4, 70200 Kuopio", "details": null }, 
+  "result": null, 
+  "liveResult": { 
+    "periods": { "home": 1, "away": 0 }, 
+    "runs": [ 
+      { "home": [ 4, 1, 0, 1 ], "away": [ 0, 1, 0, 1 ] }, 
+      { "home": [ 0, 0, 1, 1 ], "away": [ 0, 1, 4, 0 ] }, 
+      { "home": [ null ], "away": [ null ] }, 
+      { "home": [ null ], "away": [ null ] } ], 
+    "maxPlayedPeriod": 0, 
+    "lastPeriod": 1, 
+    "lastPeriodFinished": false, 
+    "lastInning": 3, 
+    "batTurn": 1, 
+    "lastTeam": 12482, 
+    "lastTeamKey": "home", 
+    "lastEventText": [ 
+      "1. lyönti", { "type": "hit", "hit": { "x": 49.18032786885246, "y": 56.31868131868132, "out": false, "badPitches": 0, "caught": true } }, { "type": "hit-extra", "hit-type": "caught", "text": "koppi" } ], 
+      "lastRAB": [ 7, null, null, 3, null ], "outs": 2, "finished": false }, 
+    "series": { "level": 26, "series": 1, "phase": 14, "region": null, "seasonSeries": 1299, "group": 2789, "matchSeries": null, "matchSeriesSituation": null, "organizer": 1, "season": 108 }, 
+    "canceled": false, 
+    "date_changes": false, 
+    "date_tba": false, 
+    "invalidated": false, 
+    "violated_rules": false, 
+    "match_gave_up": false, 
+    "playing_type": 2, 
+    "notes": "", 
+    "live": true, 
+    "url": "https://www.pesistulokset.fi:443/ottelut/83755", 
+    "streams": [] 
+}

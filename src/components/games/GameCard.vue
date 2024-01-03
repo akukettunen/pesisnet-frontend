@@ -2,7 +2,13 @@
   <v-card flat class="px-2" @click="$router.push(`/games/${game.id}`)">
     <v-divider></v-divider>
     <v-sheet class="d-flex">
-      <span class="d-flex mr-4 sport-font" style="align-items: center;">
+      <!--
+        batTurn 0 = koti, 1 = vieras
+        lastInning 1 = 1. vuoro pelattu, toinen menossa
+        lastPeriod 1 = 1. jakso pelattu, toinen menossa
+        lastPeriodFinished true -> tauolla
+      -->
+      <span :style="`color: ${game.live ? 'red' : ''}`" class="d-flex mr-4 sport-font" style="align-items: center;">
         {{ pretty_day_from_date(game.date) }}
       </span>
       <v-sheet class="d-flex-column">
@@ -10,25 +16,24 @@
         <game-card-team :team="game.away"></game-card-team>
       </v-sheet>
       <v-spacer></v-spacer>
-      <div v-if="game.result">
-        <div style="padding-top: 1.5px;" v-if="game.playing_type == 2" :class="{'pr-16': !$vuetify.display.mobile}">
+      <div v-if="game.liveResult" :class="{'pr-16': !$vuetify.display.mobile}">
+        <!-- Live game -->
+        <div v-if="game.playing_type == 2">
           <PointBoxes>
-            <PointBox color="secondary" :value="game.result.details.runs_home_first_period"></PointBox>
-            <PointBox color="secondary" :value="game.result.details.runs_away_first_period"></PointBox>
+            <PointBox :color="game.live ? 'secondary' : 'primary'" :value="game.liveResult.periods.home"></PointBox>
+            <PointBox :color="game.live ? 'secondary' : 'primary'" :value="game.liveResult.periods.away"></PointBox>
           </PointBoxes>
-          <PointBoxes>
-            <PointBox color="secondary" :value="game.result.details.runs_home_second_period"></PointBox>
-            <PointBox color="secondary" :value="game.result.details.runs_away_second_period"></PointBox>
-          </PointBoxes>
-          <PointBoxes>
-            <PointBox :value="2"></PointBox>
-            <PointBox :value="0"></PointBox>
-          </PointBoxes>
+          <span v-if="!$vuetify.display.mobile">
+            <PointBoxes v-for="(runs, i) in game.liveResult.runs.filter(r => r.home[0] != null || r.away[0] != null)" :key="i + 'runs'">
+              <PointBox :value="get_runs(runs.home)"></PointBox>
+              <PointBox :value="get_runs(runs.away)"></PointBox>
+            </PointBoxes>
+          </span>
         </div>
-        <div style="padding-top: 1.5px;" v-else :class="{'pr-16': !$vuetify.display.mobile}">
-          <PointBoxes>
-            <PointBox :value="game.result.details.runs_home_first_period"></PointBox>
-            <PointBox :value="game.result.details.runs_away_first_period"></PointBox>
+        <div v-else>
+          <PointBoxes v-for="(runs, i) in game.liveResult.runs.filter(r => r.home[0] != null || r.away[0] != null)" :key="i + 'runs'">
+            <PointBox :color="game.live ? 'secondary' : 'primary'" :value="get_runs(runs.home)"></PointBox>
+            <PointBox :color="game.live ? 'secondary' : 'primary'" :value="get_runs(runs.away)"></PointBox>
           </PointBoxes>
         </div>
       </div>
@@ -49,8 +54,12 @@ export default {
   props: ['game'],
   computed: {
     ...mapGetters('games', [
-      'pretty_day_from_date'
-    ])
+      'pretty_day_from_date',
+      'get_runs'
+    ]),
+  },
+  methods: {
+
   }
 }
 </script>

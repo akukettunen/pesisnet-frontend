@@ -1,6 +1,6 @@
 <template>
   <v-sheet
-    color="primary"
+    :style="`align-self: center; font-size: ${ $vuetify.display.mobile ? '10px' : '14px' }`"
     class="sport-font point-box align-self-center"
   >
     {{ value }}
@@ -15,11 +15,9 @@ export default {
 
 <style lang="scss">
 .point-box {
-  background-color: blue;
-  color: white;
-  padding: 0px 6px;
+  font-weight: bold;
+  padding: 0px 5px;
   border-radius: 5px;
-  font-size: 16px;
   margin: 2px;
   text-align: center;
 }

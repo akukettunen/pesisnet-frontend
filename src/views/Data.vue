@@ -1,42 +1,56 @@
 <template>
-  <v-container style="height: 100%;">
+  <v-container class="mx-auto" style="height: 100%;">
+    <v-app-bar>
+      <v-btn style="padding-top: 100px;"></v-btn>
+    </v-app-bar>
     <v-card flat class="px-3" style="padding-top: 80px; height: 100%;">
-      <v-row>
-        <v-col cols="12" md="6" class="">
-          <v-card style="z-index: 10;" class="pa-2 overflow-visible" flat>
-            <v-card-title>
-              <v-icon>mdi-account-outline</v-icon>
-              Pelaajahaku
-            </v-card-title>
-            <v-sheet class="py-3 flex-column">
-              <v-card-text>Kokeile näitä</v-card-text>
-              <v-btn
-                v-for="pl in example_players"
-                @click="player_name = pl.value"
-                :key="pl.value" 
-                class="ml-1 my-1" 
-                variant="outlined"
-                size="x-small"
+      <v-card style="z-index: 10;" class="pa-2 overflow-visible" flat>
+        <v-card-title>
+          <v-icon>mdi-account-outline</v-icon>
+          Pelaajahaku
+        </v-card-title>
+        <v-sheet class="py-3 flex-column">
+          <v-card-text>Kokeile näitä</v-card-text>
+          <v-btn
+            v-for="pl in example_players"
+            @click="player_name = pl.value"
+            :key="pl.value" 
+            class="ml-1 my-1" 
+            variant="outlined"
+            size="x-small"
+          >
+              {{ pl.text }}
+          </v-btn>
+        </v-sheet>
+        <v-sheet class="my-5">
+          <!-- <vue-select
+            v-model="player_name"
+            v-if="!loading_players"
+            :options="players"
+            placeholder="Hae pelaajaa (Sukunimi Etunimi)"
+          ></vue-select> -->
+          <!-- <v-card v-else>
+            <v-progress-linear color="primary" indeterminate />
+            <v-card-text>Ladataan pelaajia...</v-card-text>
+          </v-card> -->
+          <v-text-field
+            placeholder="Hae pelaajaa nimellä"
+          >
+          <v-menu activator="parent">
+            <v-list>
+              <v-list-item
+                v-for="(item, index) in [1, 2, 3]"
+                :key="index"
+                :value="index"
               >
-                  {{ pl.text }}
-              </v-btn>
-            </v-sheet>
-            <v-sheet class="my-5">
-              <vue-select
-                v-model="player_name"
-                v-if="!loading_players"
-                :options="players"
-                placeholder="Hae pelaajaa (Sukunimi Etunimi)"
-              ></vue-select>
-              <v-card v-else>
-                <v-progress-linear color="primary" indeterminate />
-                <v-card-text>Ladataan pelaajia...</v-card-text>
-              </v-card>
-            </v-sheet>
-          </v-card>
-          <player-card v-if="player_name" :key="player_name" :player_id="parsePlayerIdFromName(player_name)"></player-card>
-        </v-col>
-      </v-row>
+                <v-list-item-title>{{ item }}</v-list-item-title>
+              </v-list-item>
+            </v-list>
+          </v-menu>
+          </v-text-field>
+        </v-sheet>
+      </v-card>
+      <player-card v-if="player_name" :key="player_name" :player_id="parsePlayerIdFromName(player_name)"></player-card>
     </v-card>
   </v-container>
 </template>
@@ -72,6 +86,10 @@ data: () => ({
       'players',
       'parsePlayerIdFromName',
       'player'
+    ]),
+    ...mapGetters('data', [
+      'maps',
+      'season_serieses'
     ])
   }
 }

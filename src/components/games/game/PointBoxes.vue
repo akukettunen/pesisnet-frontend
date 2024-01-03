@@ -1,5 +1,5 @@
 <template>
-  <div style="height: 100%; align-items: center;" class="inline flex-d align-center">    
+  <div style="padding-top: 4px; height: 100%; align-items: center;" class="inline flex-d align-center align-self-center">    
     <slot></slot>
   </div>
 </template>

@@ -3,7 +3,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 
 const routes = [
   {
-    path: '/',
+    path: '/games',
     component: () => import('@/layouts/default/Default.vue'),
     children: [
       {
@@ -36,7 +36,23 @@ const routes = [
         name: 'Data',
         component: () => import('@/views/Data.vue'),
         meta: {
-          show_news_bar: false
+          show_data_bar: true,
+        }
+      },
+      {
+        path: 'standings',
+        name: 'Standings',
+        component: () => import('@/views/data/Standings.vue'),
+        meta: {
+          show_data_bar: true,
+        }
+      },
+      {
+        path: 'player-cards',
+        name: 'PlayerCards',
+        component: () => import('@/views/Data.vue'),
+        meta: {
+          show_data_bar: true,
         }
       },
     ],
@@ -60,6 +76,11 @@ const routes = [
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
   routes,
+})
+
+router.beforeEach((to, from) => {
+  if(to.path === '/') return { path: '/games' }
+  if(to.path === '/stats') return { path: '/stats/player-cards' }
 })
 
 export default router
