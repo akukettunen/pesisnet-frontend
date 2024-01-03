@@ -7,6 +7,7 @@ phases:
     runtime-versions:
       nodejs: 12
     commands:
+      - npm i npm@latest -g
       - echo Not installing Mocha...x
   pre_build:
     commands:
