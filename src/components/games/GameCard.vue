@@ -32,8 +32,14 @@
         </div>
         <div v-else>
           <PointBoxes v-for="(runs, i) in game.liveResult.runs.filter(r => r.home[0] != null || r.away[0] != null)" :key="i + 'runs'">
-            <PointBox :color="game.live ? 'secondary' : 'primary'" :value="get_runs(runs.home)"></PointBox>
-            <PointBox :color="game.live ? 'secondary' : 'primary'" :value="get_runs(runs.away)"></PointBox>
+            <PointBox 
+              :color="game.live ? 'secondary' : 'primary'" 
+              :value="get_runs(runs.home)"
+            ></PointBox>
+            <PointBox 
+              :color="game.live ? 'secondary' : 'primary'" 
+              :value="get_runs(runs.away)"
+            ></PointBox>
           </PointBoxes>
         </div>
       </div>

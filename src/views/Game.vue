@@ -3,7 +3,12 @@
     <!-- {{ stats_by_hitter }} -->
     <v-sheet class="pa-10" style="height: 100%;">
       <GameHeader/>
-      <GameBar/>
+      Fin {{ finished }}
+      <div></div>
+      {{ game_data }}
+      {{ game }}
+
+      <GameEvents/>
       <!-- <div class="my-5" v-for="a in happening_type_events" :key="a">
         {{ a }}
       </div>
@@ -19,6 +24,7 @@
           >
             <DataTable :data="stats_table('home')" />
           </v-skeleton-loader>
+          <Prizes side="home"></Prizes>
         </v-col>
         <v-col cols="12" md="6">
           <v-skeleton-loader
@@ -28,6 +34,7 @@
           >
             <DataTable :data="stats_table('away')" />
           </v-skeleton-loader>
+          <Prizes side="away"></Prizes>
         </v-col>
       </v-row>
     </v-sheet>
@@ -38,11 +45,13 @@
 import GameBar from '@/components/games/game/GameBar.vue'
 import GameHeader from '@/components/games/game/GameHeader.vue'
 import DataTable from '@/components/data/DataTable.vue'
+import GameEvents from '@/components/games/game/GameEvents.vue'
+import Prizes from '@/components/games/game/Prizes.vue'
 
 import { mapActions, mapGetters } from 'vuex'
 
 export default {
-  components: { GameHeader, GameBar, DataTable },
+  components: { GameHeader, GameBar, DataTable, GameEvents, Prizes },
   created() {
     this.getGameData(this.$route.params.id)
   },
@@ -60,21 +69,10 @@ export default {
       'stat_points',
       'stats_by_hitter',
       'stats_table',
-      'loading_game'
-    ]),
-    exampleData() {
-      return {
-        headers: [
-          { text: 'Pelaaja', key: 'player' },
-          { text: '1-til', key: '1' },
-        ],
-        data: [
-          { player: '1. Eetu Kettunen', 1: '95%' },
-          { player: '2. Jari Lettunen', 1: '55%' },
-          { player: '3. Tero Lettunen', 1: '98%' },
-        ]
-      }
-    }
+      'loading_game',
+      'game_data',
+      'finished'
+    ])
   }
 }
 </script>

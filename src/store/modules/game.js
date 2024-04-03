@@ -8,7 +8,8 @@ const game = {
     game_data: {},
     events: [],
     loading_game: false,
-    loading_game_id: null // this is always the latest fetched game id and only initially null
+    loading_game_id: null, // this is always the latest fetched game id and only initially null
+    finished: false
   }),
   mutations: {
     SET_GAME(state, val) {
@@ -25,6 +26,9 @@ const game = {
     },
     SET_LOADING_GAME_ID(state, val) {
       state.loading_game_id = val
+    },
+    SET_FINISHED(state, val) {
+      state.finished = val
     }
   },
   actions: {
@@ -38,6 +42,7 @@ const game = {
 
           commit('SET_GAME', e.data.game)
           commit('SET_EVENTS', e.data.events)
+          commit('SET_FINISHED', e.data.finished)
           commit('SET_GAME_DATA', e.data.gameData)
         })
         .finally(() => {
@@ -51,13 +56,11 @@ const game = {
     game: state => state.game, 
     game_data: state => state.game_data, 
     loading_game: state => state.loading_game,
+    finished: state => state.finished,
     loading_game_id: state => state.loading_game_id,
     events: state => state.events,
-    stat_type_events: (_, getters) => {
-      // Lyönti
-      if(!getters.events) return []
-
-      return getters.events.filter(e => e.groupType == 'o')
+    reversed_events: (_, getters) => {
+      return getters.events.reverse()
     },
     happening_type_events: (_, getters) => {
       // Jaksojen alut ja loput
@@ -66,28 +69,50 @@ const game = {
       return getters.events.filter(e => e.groupType == 'm')
     },
     stat_events: (_, getters) => {
-      if(!getters.stat_type_events) return []
+      if(!getters.events) return []
 
-      return getters.stat_type_events.map(e => {
+      return getters.events.map(e => {
         return e.events.filter(a => a.type == 'stat')
       }).flat() 
     },
-    stat_points: (_, getters) => {
-      const evs = getters.stat_type_events.map(e => {
+    stat_points: (_, getters) => (team_id) => {
+
+      const evs = getters.events.filter(e => e.team == team_id).map((e, i) => {
+        //  { "type": "stat", "pointhits": 3 }, { "type": "stat", "score": 3 }
+
         const stat = e.events.map(event => {
-          return event.texts.filter( t => t.type == 'stat' )
+          let conc = []
+
+          if(event.texts.map(t => t.score || t.walkscore || t.wtscore).includes(1)) {
+            conc = {
+              ran_run: 1,
+              type: 'stat',
+              player_id: event.texts.find(p => p.type == 'player' && p.role != 'batter')['number']
+            }
+          } else if(event.texts.map(t => t.score || t.walkscore || t.wtscore).includes(3)) {
+            conc = [{
+              ran_run: 1,
+              type: 'stat',
+              player_id: event.texts.find(p => p.type == 'player' && p.role != 'batter')['id']
+            }]
+          }
+
+          return event.texts.filter( t => t.type == 'stat' ).concat(conc)
         }).flat()
 
-        return { stats: stat, batter: e.batter }
+
+        return { stats: stat, batter: e.batter, team_id }
       }).filter(s => s.stats.length).flat()
 
       return evs
     },
-    stats_by_hitter: (_, getters) => {
+    form_stats: () => (points, side) => {
       let batters = {}
 
-      getters.stat_points.forEach(s => {
-        if(!batters[s.batter]) batters[s.batter] = {
+      points.forEach(s => {
+        let key = `${s.batter}_${side}`
+
+        const getEmptyStats = () => ({
           pointhits: 0,
           pointhitf: 0,
           pointhitf0: 0,
@@ -101,41 +126,58 @@ const game = {
           pmv: 0, // palot mailan varressa ( out )
           score: 0, // lyödyt juoksut
           runner_at_3: 0,
+          ran_runs: 0,
           homeruns: 0
-        }
+        })
+
+        if(!batters[key]) batters[key] = getEmptyStats()
 
         s.stats?.forEach(b => {
+
           if(b.pointhitf || b.pointhitf == 0) {
-            batters[s.batter]['pointhitf' + b.pointhitf]++
-            batters[s.batter]['pointhitf']++
+            batters[key]['pointhitf' + b.pointhitf]++
+            batters[key]['pointhitf']++
           }
           if(b.pointhits || b.pointhits == 0) {
-            batters[s.batter]['pointhits' + b.pointhits]++
-            batters[s.batter]['pointhits']++
+            batters[key]['pointhits' + b.pointhits]++
+            batters[key]['pointhits']++
           }
           if(b['runner-at-3']) {
-            batters[s.batter]['runner_at_3']++
+            batters[key]['runner_at_3']++
           }
           if(b['out']) {
-            batters[s.batter]['pmv'] = batters[s.batter]['pmv'] + b['out']
-          }
-          if(b['out']) {
-            batters[s.batter]['pmv'] = batters[s.batter]['pmv'] + b['out']
+            batters[key]['pmv'] = batters[key]['pmv'] + 1
           }
           if(b['score']) {
-            batters[s.batter]['score']++
+            batters[key]['score']++
           }
           if(b['homerun']) {
-            batters[s.batter]['homeruns']++
+            batters[key]['homeruns']++
+            batters[key]['ran_runs']++
+          }
+          if(b['ran_run']) {
+            const new_key = `${b["player_id"]}_${side}`
+            if(!batters[new_key]) batters[new_key] = getEmptyStats()
+            batters[new_key]['ran_runs']++
           }
         })
       })
+      return batters;
+    },
+    stats_by_hitter: (_, getters) => {
+      const home = getters.stat_points(getters.game_data.home.id)
+      const away = getters.stat_points(getters.game_data.away.id)
 
-      return batters
+      // Tässä vituiksi
+      const data = {
+        home: getters.form_stats(home, 'home'),
+        away: getters.form_stats(away, 'away')
+      }
+
+      return data
     },
     stats_table: (_, getters) => side => {
       if(!getters.game?.id) return { headers: [], data: [] }
-
       return {
         title: '',
         headers: [
@@ -143,35 +185,51 @@ const game = {
           { text: 'UP', key: 'outfield_pos', long_text: 'Ulkopelipaikka' },
           { text: 'K', key: 'homeruns', long_text: 'Kunnarit' },
           { text: 'L', key: 'score', long_text: 'Lyödyt' },
-          { text: 'KL', key: 'pointhits', long_text: 'Kärkilyönnit' },
-          { text: 'Y', key: 'pointhitstries', long_text: 'Kärkilyöntiyritykset' },
+          { text: 'T', key: 'ran_runs', long_text: 'Tuodut' },
+          { text: 'KL', key: 'pointhits', long_text: 'Kärkilyönnit / Kärkilyöntiyritykset' },
           { text: '1%', key: 'pointhits0', long_text: 'Kärkilyönnit 0-til' },
           { text: '2%', key: 'pointhits1', long_text: 'Kärkilyönnit 1-til' },
           { text: '3%', key: 'pointhits2', long_text: 'Kärkilyönnit 2-til' },
           { text: 'K%', key: 'pointhits3', long_text: 'Kärkilyönnit kotiin' },
+          { text: 'KL%', key: 'kl_percentage', long_text: 'Kärkilyöntiprosentti' },
+          { text: 'PMV', key: 'pmv', long_text: 'Palot mailan varressa' },
         ],
         data: getters.game[side].players.map(player => {
+          let player_identifier = `${player.id}_${side}`
+          let player_stats = getters.stats_by_hitter[side][player_identifier]
+          if(!player_stats) {
+            player_identifier = `${player.number}_${side}`
+            player_stats = getters.stats_by_hitter[side][player_identifier]
+          }
+
+          const kl = player_stats?.pointhits || 0
+          const yri = kl + player_stats?.pointhitf || 0
+          const klperyrit = (kl == 0 && yri == 0) ? '-' : `${kl}/${yri}`
+          let kl_per = yri ? `${parseInt(((kl / yri) * 100).toFixed(0))}%` : '-'
+          
           return {
             player: `${player.number}. ${player.first_name} ${player.last_name}`,
             outfield_pos: player.defensive_position.short_name || '-',
-            homeruns: getters.stats_by_hitter[player.id]?.homeruns || '-',
-            score: getters.stats_by_hitter[player.id]?.score || '-',
-            pointhits: getters.stats_by_hitter[player.id]?.pointhits || '-',
-            pointhitstries: getters.stats_by_hitter[player.id]?.pointhits + getters.stats_by_hitter[player.id]?.pointhitf || '-',
-            pointhits0: getters.get_point_hits_string(player.id, 0),
-            pointhits1: getters.get_point_hits_string(player.id, 1),
-            pointhits2: getters.get_point_hits_string(player.id, 2),
-            pointhits3: getters.get_point_hits_string(player.id, 3),
+            homeruns: player_stats?.homeruns || '-',
+            score: player_stats?.score || '-',
+            ran_runs: player_stats?.ran_runs || '-',
+            pointhits: klperyrit,
+            pointhits0: getters.get_point_hits_string(player_identifier, 0, side),
+            pointhits1: getters.get_point_hits_string(player_identifier, 1, side),
+            pointhits2: getters.get_point_hits_string(player_identifier, 2, side),
+            pointhits3: getters.get_point_hits_string(player_identifier, 3, side),
+            kl_percentage: kl_per,
+            pmv: player_stats?.pmv || '-'
             // player
           }
         })
       }
     },
-    get_point_hits_string: (_, getters) => (player_id, base) => {
-      if(!getters.stats_by_hitter[player_id]) return '-'
+    get_point_hits_string: (_, getters) => (player_id, base, side) => {
+      if(!getters.stats_by_hitter[side][player_id]) return '-'
 
-      const s = getters.stats_by_hitter[player_id]['pointhits' + base]
-      const f = getters.stats_by_hitter[player_id]['pointhitf' + base]
+      const s = getters.stats_by_hitter[side][player_id]['pointhits' + base]
+      const f = getters.stats_by_hitter[side][player_id]['pointhitf' + base]
 
       if(s + f == 0) return '-'
 

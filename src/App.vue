@@ -3,7 +3,19 @@
     <v-layout>
       <v-app-bar color="primary-darken-1" name="app-bar" :elevation="$route.meta.show_news_bar ? '0' : '2'">
         <v-app-bar-title v-if="!$vuetify.display.mobile" style="flex-shrink: 1;">
-          PesisNet
+            <v-img
+              @click="$router.push('/')"
+              height="50"
+              width="50"
+              cover
+              style="border-radius: 50%; cursor: pointer;"
+              src="./assets/images/logo.png"
+            >
+              <v-tooltip
+                activator="parent"
+                location="end"
+              >Peleihin</v-tooltip>
+            </v-img>
         </v-app-bar-title>
         <v-sheet color="primary-darken-1" height="90%" class="mx-auto">
           <v-btn

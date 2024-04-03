@@ -3,7 +3,7 @@
     <v-app-bar>
       <v-btn style="padding-top: 100px;"></v-btn>
     </v-app-bar>
-    <v-card flat class="px-3" style="padding-top: 80px; height: 100%;">
+    <v-card max-width="1000" flat class="px-3 mx-auto" style="padding-top: 80px; height: 100%;">
       <v-card style="z-index: 10;" class="pa-2 overflow-visible" flat>
         <v-card-title>
           <v-icon>mdi-account-outline</v-icon>

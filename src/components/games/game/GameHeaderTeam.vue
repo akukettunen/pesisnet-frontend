@@ -7,7 +7,7 @@
         :style="`height: ${dim+20}px; width: ${dim+20}px;`"
       >
         <v-img
-          v-if="!loading_game"
+          v-if="!loading_game && team.sport_club"
           class="align-self-center" 
           style="border-radius: 20px;" 
           :height="dim" :width="dim"
@@ -23,7 +23,7 @@
       </div>
     </div>
     <div class="sport-font" style="width: 100%; text-align: center; font-size: 80px;"> 
-      <span v-if="!loading_game">{{ points }}</span>
+      <span v-if="!loading_game && points">{{ points }}</span>
       <span v-else>0</span>
     </div>
     <!-- {{ team.sport_club }} -->
