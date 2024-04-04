@@ -10,7 +10,7 @@
     </v-col>
     <v-col order-md="2" order="1" class="justify-center d-flex" cols="12" md="6">
       <div style="position: relative;">
-        <GameField :width="width" :height="height" />
+        <GameField :hits="[{x: 0.5, y: 0.4}]" :width="width" :height="height" />
       </div>
     </v-col>
   </v-row>
@@ -29,8 +29,18 @@ export default {
   }),
   computed: {
     ...mapGetters('game', [
-      'reversed_events'
-    ])
+      'reversed_events',
+      'game_data'
+    ]),
+    current_inning_events() {
+      if(!this.game_data || !this.game_data.liveResult) return []
+
+      const { batTurn, lastInning, maxPlayedPeriod } = this.game_data.liveResult
+
+      return [...this.reversed_events].filter(e => {
+        return e.period == maxPlayedPeriod && e.inning == lastInning && e.batTurn == batTurn
+      })
+    }
   }
 }
 </script>

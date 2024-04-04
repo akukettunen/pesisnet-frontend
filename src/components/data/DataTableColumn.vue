@@ -9,7 +9,7 @@
         {{ col.long_text }}
       </v-tooltip>
     </v-sheet>
-    <v-sheet :class="{ 'dt-col-cell--left': col.left }" class="dt-col-cell dt-col-cell" v-for="cell in data" :key="cell[col]">
+    <v-sheet @click="$emit('cell-clicked', { column: col.key, row: cell })" :class="{ 'dt-col-cell--left': col.left }" class="dt-col-cell dt-col-cell" v-for="cell in data" :key="cell[col]">
       {{ cell[col.key] }}
     </v-sheet>
   </v-sheet>

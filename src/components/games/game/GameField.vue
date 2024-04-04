@@ -1,7 +1,17 @@
 <template>
   <div>
     <div>
-      
+      <!-- {{ game }} -->
+    </div>
+    <div v-for="(hit, i) in hits" :key="`hit${i}`" :style="`position: absolute; top: ${height * hit.y - 10}px; left: ${width * hit.x - 10}px; z-index: 1;`">
+      <!-- {
+        type: "palo",
+        x: 0.5,
+        y: 0.4
+      } -->
+      <v-icon color="red">
+        mdi-close
+      </v-icon>
     </div>
     <v-img
       v-if="$vuetify.theme.name == 'dark'"
@@ -35,8 +45,15 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
+
 export default {
-  props: ['height', 'width']
+  props: ['height', 'width', 'hits'],
+  computed: {
+    ...mapGetters('game', [
+      'game'
+    ])
+  }
 }
 </script>
 

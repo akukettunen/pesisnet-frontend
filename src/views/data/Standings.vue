@@ -35,7 +35,6 @@
         {{ match }}
       </div>
     </v-sheet>
-    {{ matches }}
   </v-container>
 </template>
 

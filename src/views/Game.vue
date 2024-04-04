@@ -5,8 +5,8 @@
       <GameHeader/>
       Fin {{ finished }}
       <div></div>
-      {{ game_data }}
-      {{ game }}
+      <!-- {{ game_data }}
+      {{ game }} -->
 
       <GameEvents/>
       <!-- <div class="my-5" v-for="a in happening_type_events" :key="a">
@@ -16,25 +16,15 @@
         {{ a }}
       </div> -->
       <v-row style="flex-direction: row;" class="my-5">
-        <v-col cols="12" md="6">
+        <v-col v-for="side in ['home', 'away']" :key="`${side}-game-data-table-stats`" cols="12" md="6">
           <v-skeleton-loader
             type="list-item-three-line	, list-item-three-line	, list-item-three-line	"
             style="width: 100%; max-width: calc(100vw - 80px); justify-content: center; display: flex;"
             :loading="loading_game"
           >
-            <DataTable :data="stats_table('home')" />
+            <DataTable @cell-clicked="handleCellClicked($event)" :data="stats_table(side)" />
           </v-skeleton-loader>
-          <Prizes side="home"></Prizes>
-        </v-col>
-        <v-col cols="12" md="6">
-          <v-skeleton-loader
-            type="list-item-three-line	, list-item-three-line	, list-item-three-line	"
-            style="width: 100%; max-width: calc(100vw - 80px); justify-content: center; display: flex;"
-            :loading="loading_game"
-          >
-            <DataTable :data="stats_table('away')" />
-          </v-skeleton-loader>
-          <Prizes side="away"></Prizes>
+          <Prizes :side="side"></Prizes>
         </v-col>
       </v-row>
     </v-sheet>
@@ -58,7 +48,14 @@ export default {
   methods: {
     ...mapActions('game', [
       'getGameData'
-    ])
+    ]),
+    handleCellClicked(e) {
+      if(e.column == 'pointhits') {
+        let fil_events = this.events.filter(event => event.batter == e.row.player_id && event.groupType == 'o')
+
+        console.log(fil_events)
+      }
+    }
   },
   computed: {
     ...mapGetters('game', [

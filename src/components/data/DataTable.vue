@@ -6,6 +6,7 @@
     <div class="dt-table">
       <div class="dt-table-locked">
         <data-table-column
+          @cell-clicked="$emit('cell-clicked', $event)"
           v-for="(header, i) in locked_headers" 
           :data="data.data" 
           :header="header"
@@ -13,7 +14,8 @@
         />
       </div>
       <div class="dt-table-scroll">
-        <data-table-column 
+        <data-table-column
+          @cell-clicked="$emit('cell-clicked', $event)" 
           v-for="(header, i) in unlocked_headers" 
           :data="data.data" 
           :header="header"

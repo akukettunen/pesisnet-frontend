@@ -9,7 +9,13 @@ const game = {
     events: [],
     loading_game: false,
     loading_game_id: null, // this is always the latest fetched game id and only initially null
-    finished: false
+    finished: false,
+    bases: [ 
+      8612, // lyöjä
+      8612, // ykköspesä
+      8612, // kakkospesä
+      8612, // kolmosella
+    ]
   }),
   mutations: {
     SET_GAME(state, val) {
@@ -219,7 +225,9 @@ const game = {
             pointhits2: getters.get_point_hits_string(player_identifier, 2, side),
             pointhits3: getters.get_point_hits_string(player_identifier, 3, side),
             kl_percentage: kl_per,
-            pmv: player_stats?.pmv || '-'
+            pmv: player_stats?.pmv || '-',
+            side,
+            player_id: player.id || player.number
             // player
           }
         })
