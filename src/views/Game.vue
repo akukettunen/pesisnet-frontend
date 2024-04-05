@@ -3,11 +3,9 @@
     <!-- {{ stats_by_hitter }} -->
     <v-sheet class="pa-10" style="height: 100%;">
       <GameHeader/>
-      Fin {{ finished }}
+      <!-- Fin {{ finished }} -->
       <div></div>
-      <!-- {{ game_data }}
-      {{ game }} -->
-
+      <GameLiveBar/>
       <GameEvents/>
       <!-- <div class="my-5" v-for="a in happening_type_events" :key="a">
         {{ a }}
@@ -37,11 +35,12 @@ import GameHeader from '@/components/games/game/GameHeader.vue'
 import DataTable from '@/components/data/DataTable.vue'
 import GameEvents from '@/components/games/game/GameEvents.vue'
 import Prizes from '@/components/games/game/Prizes.vue'
+import GameLiveBar from '@/components/games/game/GameLiveBar.vue'
 
 import { mapActions, mapGetters } from 'vuex'
 
 export default {
-  components: { GameHeader, GameBar, DataTable, GameEvents, Prizes },
+  components: { GameHeader, GameBar, DataTable, GameEvents, Prizes, GameLiveBar },
   created() {
     this.getGameData(this.$route.params.id)
   },

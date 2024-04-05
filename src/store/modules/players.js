@@ -9,7 +9,9 @@ const games = {
     loading_players: false,
     chosen_player: null,
     events: [],
-    run_data: null
+    run_data: null,
+    last_search: '',
+    latest_loading_player_id: null
   }),
   mutations: {
     SET_PLAYERS(state, val) {
@@ -29,6 +31,12 @@ const games = {
     },
     SET_EVENTS(state, events) {
       state.events = events
+    },
+    SET_LAST_SEARCH(state, event) {
+      state.last_search = event
+    },
+    SET_LATEST_LOADING_PLAYER_ID(state, val) {
+      state.latest_loading_player_id = val
     }
   },
   actions: {
@@ -42,13 +50,37 @@ const games = {
           commit('SET_LOADING_PLAYERS', false)
         })
     },
-    getPlayerData({ commit }, player_id, season) {
+    getPlayers({ commit, getters }, search) {
+      if(!search) return
+      
+      if(getters.last_search.split(' ')[0] === search.split(' ')[0]) {
+        return
+      }
+
+      if(search.length < 2) return
+      commit('SET_LAST_SEARCH', search)
+      
+      search = search.split(' ')[0]
+      a(`/players/query/${search}`)
+        .then(e => {
+          if(e.data.search_string !== getters.last_search) return
+          commit('SET_PLAYERS', e.data?.players)
+        })
+        .finally(() => {
+          commit('SET_LOADING_PLAYERS', false)
+        })
+    },
+    getPlayerData({ commit, getters }, player_id, season) {
       commit('SET_LOADING_PLAYER', true)
+      commit('SET_LATEST_LOADING_PLAYER_ID', player_id)
       commit('SET_PLAYER', null)
+      commit('SET_EVENTS', null)
+      commit('SET_RUN_DATA', null)
 
       return new Promise((resolve, reject) => {
         a(`/players/${player_id}?season=${season}`)
           .then(e => {
+            if(e.data.player.id !== getters.latest_loading_player_id) return
             commit('SET_PLAYER', e.data.player)
             commit('SET_EVENTS', e.data.events_grouped_by_tilanne)
             commit('SET_RUN_DATA', e.data.averages)
@@ -66,6 +98,8 @@ const games = {
   getters: {
     players: state => state.players,
     player: state => state.player,
+    latest_loading_player_id: state => state.latest_loading_player_id,
+    last_search: state => state.last_search,
     loading_players: state => state.loading_players,
     run_data: (state) => {
       if(!state.run_data) return null

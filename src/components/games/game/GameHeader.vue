@@ -12,9 +12,9 @@
 
          <!-- TODO: Result ei anna ulos livetulosta  -->
         <v-sheet v-if="game_data.liveResult || loading_game" :style="`flex-grow: 0; font-size: ${$vuetify.display.mobile ? '16px' : '24px'}`" class="sport-font">
-          <div v-if="finished && !loading_game" style="text-align: center; font-size: 16px; color: aliceblue" class="sport-font">
+          <v-sheet v-if="finished && !loading_game" style="text-align: center; font-size: 16px;" class="sport-font">
             Ottelu päättynyt
-          </div>
+          </v-sheet>
           <div style="text-align: center;">
             {{ generateGameResultString(game_data.liveResult) }}
           </div>

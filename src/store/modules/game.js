@@ -15,9 +15,15 @@ const game = {
       8612, // ykköspesä
       8612, // kakkospesä
       8612, // kolmosella
-    ]
+    ],
+    opened_event: null,
+    events_to_be_simulated: []
   }),
   mutations: {
+    RESET_GAME_DATA(state) {
+      state.game = {}
+      state.game_data = {}
+    },
     SET_GAME(state, val) {
       state.game = val
     },
@@ -35,19 +41,36 @@ const game = {
     },
     SET_FINISHED(state, val) {
       state.finished = val
+    },
+    SET_OPENED_EVENT(state, val) {
+      state.opened_event = val
+    },
+    SET_EVENTS_TO_BE_SIMULATED(state, val) {
+      state.events_to_be_simulated = val
+    },
+    ADD_EVENT(state, val) {
+      state.events = [...state.events].concat(val)
     }
   },
   actions: {
-    getGameData({ commit, getters }, id) {
+    getGameData({ commit, getters, dispatch }, id) {
       commit('SET_LOADING_GAME_ID', id)
       commit('SET_LOADING_GAME', true)
+      commit('RESET_GAME_DATA')
 
       a(`/games/${id}`)
         .then(e => {
           if(getters.loading_game_id != id) return
 
+          const simulate = false
+          if(simulate) {
+            commit('SET_EVENTS_TO_BE_SIMULATED', e.data.events)
+            dispatch('startEventSimulation')
+          } else {
+            commit('SET_EVENTS', e.data.events)
+          }
+
           commit('SET_GAME', e.data.game)
-          commit('SET_EVENTS', e.data.events)
           commit('SET_FINISHED', e.data.finished)
           commit('SET_GAME_DATA', e.data.gameData)
         })
@@ -56,6 +79,22 @@ const game = {
 
           commit('SET_LOADING_GAME', false)
         })
+    },
+    startEventSimulation({ dispatch }) {
+      setInterval(() => {
+        dispatch('addOneEventMore')
+      }, 4000)
+    },
+    addOneEventMore({ getters, commit }) {
+      const len = [...getters.events].length
+
+      const new_event = [...getters.events_to_be_simulated][len + 1]
+
+      commit('ADD_EVENT', new_event)
+    },
+    openEvent({ getters, commit }, event) {
+      commit('SET_OPENED_EVENT', event)
+      return
     }
   },
   getters: {
@@ -64,9 +103,11 @@ const game = {
     loading_game: state => state.loading_game,
     finished: state => state.finished,
     loading_game_id: state => state.loading_game_id,
+    events_to_be_simulated: state => state.events_to_be_simulated,
+    opened_event: state => state.opened_event,
     events: state => state.events,
     reversed_events: (_, getters) => {
-      return getters.events.reverse()
+      return [...getters.events].reverse()
     },
     happening_type_events: (_, getters) => {
       // Jaksojen alut ja loput
@@ -233,6 +274,15 @@ const game = {
         })
       }
     },
+    inning_events_by_event: (_, getters) => event => {
+      if(!event) {
+        return null
+      }
+
+      return [...getters.events].filter(e => {
+        return e.period === event.period && e.inning === event.inning && e.batTurn === event.batTurn
+      })
+    },
     get_point_hits_string: (_, getters) => (player_id, base, side) => {
       if(!getters.stats_by_hitter[side][player_id]) return '-'
 
@@ -242,6 +292,26 @@ const game = {
       if(s + f == 0) return '-'
 
       return `${s}/${s + f}`
+    },
+    outsUpToEvent: (_, getters) => (event) => {
+      const evs = getters.inning_events_by_event(event).reverse()
+
+      let outs = 0
+
+      for (const b in evs) {
+        const ev = evs[b]
+
+        ev.events.forEach((t, i) => {
+          t.texts.forEach((text, i2) => {
+            if(text.type == 'stat' && text.out) {
+              outs++
+            }
+          })
+        })
+
+        if(ev.id == event.id) break
+      }
+      return outs
     }
   }
 }

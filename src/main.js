@@ -1,6 +1,8 @@
 import store from './store/index.js';
 import './assets/sass/style.scss'
 import iframeResize from 'iframe-resizer/js/iframeResizer'
+import VueSelect from "vue-select";
+import "vue-select/dist/vue-select.css";
 
 const resize = {
   mounted(el, binding) {
@@ -25,10 +27,9 @@ import { createApp } from 'vue'
 
 // Components
 import App from './App.vue';
-import VueSelect from "vue-select";
 
 const app = createApp(App)
-  .component("vue-select", VueSelect)
+  .component("b-select", VueSelect)
   .directive('res', resize)
 
 registerPlugins(app)

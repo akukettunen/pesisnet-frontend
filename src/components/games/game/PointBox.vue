@@ -1,6 +1,7 @@
 <template>
   <v-sheet
-    :style="`align-self: center; font-size: ${ $vuetify.display.mobile ? '10px' : '14px' }`"
+    :elevation="highlighted ? '5' : '0'"
+    :style="`align-self: center; font-size: ${ large ? '20px' :  $vuetify.display.mobile ? '10px' : '14px' }; cursor: ${cursor ? cursor : 'default'}; ${styling}`"
     class="sport-font point-box align-self-center"
   >
     {{ value }}
@@ -9,13 +10,20 @@
 
 <script>
 export default {
-  props: ['value']
+  props: ['value', 'large', 'cursor', 'highlighted'],
+  computed: {
+    styling() {
+      if(this.highlighted) {
+        return `border: 1px solid ${!this.$vuetify.theme.dark ? 'white' : 'black'}`
+      }
+    }
+  }
 }
 </script>
 
 <style lang="scss">
 .point-box {
-  font-weight: bold;
+  // font-weight: bold;
   padding: 0px 5px;
   border-radius: 5px;
   margin: 2px;

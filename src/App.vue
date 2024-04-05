@@ -138,5 +138,4 @@ export default {
 .sport-font {
   font-family: graduate;
 }
-
 </style>

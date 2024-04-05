@@ -54,6 +54,7 @@ export default {
       'events'
     ]),
     tilanne_events() {
+      if(!this.events) return []
       return this.events[this.tilanne]
     },
     pie_chart_data() {
