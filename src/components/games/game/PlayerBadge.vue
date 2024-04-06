@@ -19,21 +19,43 @@
     <v-chip class="pl-3" style="opacity: 1;" label flat>
       {{ player.first_name[0] }}. {{ player.last_name }}
     </v-chip>
-    <!-- {{ player.number }} -->
+    <!-- {{ player }} -->
   </v-sheet>
 </template>
 
 <script>
 import { mapGetters } from 'vuex'
 export default {
-  props: ['player_id'],
+  props: ['player_id', 'team_id'],
   computed: {
     ...mapGetters('game', [
-      'game'
+      'game',
+      'game_data',
+      'home_team_id',
+      'away_team_id'
     ]),
     player() {
       if(!this.game || !this.game['home']) return {}
-      return this.game['home'].players.concat(this.game['away'].players).find(p => p.id == this.player_id)
+      if(!this.game_data || !this.game_data.liveResult) return {}
+
+      console.log("Player id: ", this.player_id)
+      console.log('Hitting team_id: ', this.team_id)
+      console.log('Home team id: ', this.home_team_id)
+      console.log('Away team id: ', this.away_team_id)
+
+      let players_home = this.game['home'].players.map(p => {return {...p, side: 'home'}})
+      let players_away = this.game['away'].players.map(p => {return {...p, side: 'away'}})
+      let players = this.team_id == this.home_team_id ? players_home : players_away
+
+      console.log(players)
+
+      return players
+              .find(p => {
+                return p.id === this.player_id || (
+                    p.number == this.player_id
+                  )
+              }
+            )
     }
   }
 }

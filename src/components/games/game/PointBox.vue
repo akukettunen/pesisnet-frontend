@@ -5,6 +5,7 @@
     class="sport-font point-box align-self-center"
   >
     {{ value }}
+    {{this.$vuetify.theme.dark}}
   </v-sheet>
 </template>
 

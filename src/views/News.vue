@@ -1,22 +1,37 @@
 <template>
-  <v-container style="height: 100%; paddingTop: 130px;">
-    <div style="height: 800px;">
-      <!-- <iframe id="frame-1" @load="iframeLoaded('frame-1')" width="100%;" src="https://rss.app/embed/v1/wall/_KEUYFzFzSck5h0ZW" frameborder="0"></iframe> -->
-      <iframe v-res="settings" id="frame-2" height="10000" width="100%" src="https://rss.app/embed/v1/wall/_lmbRwK8NSVM6TROs" frameborder="0"></iframe>
-    </div>
+  <v-container :key="current_url" fluid style="height: 99vh; padding: 0px; padding-top: 124px;">
+    <v-sheet :key="current_url" style="height: 100%; width: 100%; max-width: 1000px; margin: 0 auto;" class="px-10">
+      <iframe :style="`visibility: ${visibility};`" :onload="onload()" id="frame-2" width="100%" height="100%" :src="current_url" frameborder="0"></iframe>
+    </v-sheet>
   </v-container>
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 export default {
   data: () => ({
-    settings: { 
-      autoResize: true, 
-      heightCalculationMethod: 'documentElementScroll', 
-      log: true, 
-      sizeHeight: true, 
-      scrolling: false 
+    visibility: 'hidden'
+  }),
+  methods: {
+    onload() {
+      console.log('visible')
+      this.visibility = 'visible'
     }
-  })
+  },
+  computed: {
+    ...mapGetters('news', [
+      'chosen_button_or_first',
+      'chosen_button',
+      'current_url'
+    ])
+  },
+  watch: {
+    'current_url': {
+      handler() {
+        console.log('handler hidden')
+        this.visibility = 'hidden'
+      }
+    }
+  }
 }
 </script>

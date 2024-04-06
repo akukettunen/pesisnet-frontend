@@ -40,9 +40,10 @@
         :height="$vuetify.display.mobile ? '50' : '60'" 
         v-if="$route.meta.show_news_bar"
       >
-        <v-btn 
+        <v-btn
           v-for="btn in news_buttons" 
-          :active="btn.active"
+          :active="current_url === btn.feedUrl"
+          @click="SET_CHOSEN_NEWS_BUTTON(btn)"
           :key="btn.text + 'news_button'"
           :size="$vuetify.display.mobile ? 'x-small' : 'small'"
         >
@@ -94,8 +95,13 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex'
+import { mapActions, mapGetters, mapMutations } from 'vuex'
 export default {
+  name: "App",
+  metaInfo: {
+    defaultTitle: 'PesisNet ⚾',
+    titleTemplate: '%s | PesisNet ⚾'
+  },
   created() {
     this.initMaps()
   },
@@ -104,18 +110,6 @@ export default {
       { text: 'Pelit', icon: 'mdi-play-box-outline', route: '/games' },
       { text: 'Uutiset & Some', icon: 'mdi-newspaper-variant-outline', route: '/news' },
       { text: 'Data & Tilastot', icon: 'mdi-database-outline', route: '/stats' },
-    ],
-    news_buttons: [
-      { text: 'MSU', feedUrl: 'google.fi', active: false, tooltip: 'Miesten superpesis' },
-      { text: 'NSU', feedUrl: 'google.fi', active: true, tooltip: 'Naisten superpesis' },
-      { text: 'MYP', feedUrl: 'google.fi', active: false, tooltip: 'Miesten ykköspesis' },
-      { text: 'NYP', feedUrl: 'google.fi', active: false, tooltip: 'Naisten ykköspesis' },
-      { text: 'Yleiset', feedUrl: 'google.fi', active: false },
-      { text: 'Superpesis.fi', feedUrl: 'google.fi', active: false },
-      { text: 'Lehdet', feedUrl: 'google.fi', active: false },
-      { text: 'Twitter', feedUrl: 'google.fi', active: false, icon: 'mdi-twitter', icon_color: 'blue' },
-      { text: 'YouTube', feedUrl: 'google.fi', active: false, icon: 'mdi-youtube', icon_color: 'red', dropdown: true },
-      { text: 'Joukkueet', feedUrl: 'google.fi', active: false, dropdown: true },
     ],
     stats_buttons: [
       { text: 'Pelaajakortit', path: '/player-cards', active: false, dropdown: false },
@@ -134,12 +128,26 @@ export default {
   methods: {
     ...mapActions('data', [
       'initMaps'
+    ]),
+    ...mapMutations('news', [
+      'SET_CHOSEN_NEWS_BUTTON'
+    ])
+  },
+  computed: {
+    ...mapGetters('news', [
+      'news_buttons',
+      'current_url',
     ])
   }
 }
 </script>
 
 <style>
+* {
+  padding: 0;
+  margin: 0;
+}
+
 .vs__dropdown-menu {
   z-index: 999 !important;
 }

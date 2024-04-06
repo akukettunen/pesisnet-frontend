@@ -1,4 +1,6 @@
 import a from '@/utils/axios'
+import dayjs from 'dayjs'
+import { nextTick } from 'vue';
 // import router from '@/router/index.js'
 
 const game = {
@@ -17,7 +19,8 @@ const game = {
       8612, // kolmosella
     ],
     opened_event: null,
-    events_to_be_simulated: []
+    events_to_be_simulated: [],
+    event_polling_interval: null
   }),
   mutations: {
     RESET_GAME_DATA(state) {
@@ -52,6 +55,9 @@ const game = {
     },
     ADD_EVENT(state, val) {
       state.events = [...state.events].concat(val)
+    },
+    SET_EVENT_POLLING_INTERVAL(state, val) {
+      state.event_polling_interval = val
     }
   },
   actions: {
@@ -75,11 +81,45 @@ const game = {
           commit('SET_GAME', e.data.game)
           commit('SET_FINISHED', e.data.finished)
           commit('SET_GAME_DATA', e.data.gameData)
+
+          nextTick(() => {
+            if(!getters.finished && getters.game_data.liveResult) {
+              dispatch('startEventPolling')
+            }
+          })
+
         })
         .finally(() => {
           if(getters.loading_game_id != id) return
 
           commit('SET_LOADING_GAME', false)
+        })
+    },
+    startEventPolling({ commit, dispatch }) {
+      console.log("START EVENT POLLING")
+      const interval = setInterval(() => {
+        dispatch('pollGameEvents')
+      }, 4000)
+
+      commit('SET_EVENT_POLLING_INTERVAL', interval)
+    },
+    stopEventPollingInterval({ getters, commit }) {
+      clearInterval(getters.event_polling_interval);
+      commit('SET_EVENT_POLLING_INTERVAL', null)
+    },
+    pollGameEvents({ getters, commit }) {
+      console.log("POLL EVENTS")
+      const id = getters.game?.id
+      if(!id) return
+
+      const time = encodeURIComponent(dayjs().format('YYYY-MM-DDTHH:mm:ssZ'))
+
+      a(`/games/poll/${id}?after=${time}`)
+        .then(e => {
+          commit('SET_EVENTS', e.data.events)
+        })
+        .catch(e => {
+          console.error(e)
         })
     },
     startEventSimulation({ dispatch }) {
@@ -94,7 +134,7 @@ const game = {
 
       commit('ADD_EVENT', new_event)
     },
-    openEvent({ getters, commit }, event) {
+    openEvent({ commit }, event) {
       commit('SET_OPENED_EVENT', event)
       return
     }
@@ -108,6 +148,7 @@ const game = {
     events_to_be_simulated: state => state.events_to_be_simulated,
     opened_event: state => state.opened_event,
     events: state => state.events,
+    event_polling_interval: state => state.event_polling_interval,
     reversed_events: (_, getters) => {
       return [...getters.events].reverse()
     },
@@ -212,6 +253,12 @@ const game = {
         })
       })
       return batters;
+    },
+    home_team_id: (_, getters) => {
+      return getters.game.home?.id
+    },
+    away_team_id: (_, getters) => {
+      return getters.game.away?.id
     },
     stats_by_hitter: (_, getters) => {
       const home = getters.stat_points(getters.game_data.home.id)

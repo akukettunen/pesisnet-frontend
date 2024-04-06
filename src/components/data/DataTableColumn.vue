@@ -24,7 +24,7 @@
 
 <script>
 export default {
-  props: ['data', 'header'],
+  props: ['data', 'header', 'density'],
   computed: {
     col() {
       return this.header

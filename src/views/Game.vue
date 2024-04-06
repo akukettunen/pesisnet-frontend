@@ -1,6 +1,6 @@
 <template>
   <v-container fluid class="px-0" style="padding-top: 64px; max-width: 1000px;">
-    <!-- {{ stats_by_hitter }} -->
+    <!-- {{ game }} -->
     <v-sheet class="pa-10" style="height: 100%;">
       <GameHeader/>
       <!-- Fin {{ finished }} -->
@@ -45,12 +45,18 @@ import { mapActions, mapGetters } from 'vuex'
 
 export default {
   components: { GameHeader, GameBar, DataTable, GameEvents, Prizes, GameLiveBar },
+  data: () => ({
+    event_polling_interval: null
+  }),
   created() {
     this.getGameData(this.$route.params.id)
   },
   methods: {
     ...mapActions('game', [
-      'getGameData'
+      'getGameData',
+      'startPollingEvents',
+      'pollGameEvents',
+      'stopEventPollingInterval'
     ]),
     handleCellClicked(e) {
       if(e.column == 'pointhits') {
@@ -73,6 +79,10 @@ export default {
       'game_data',
       'finished'
     ])
-  }
+  },
+  unmounted() {
+    console.log("STOP POLLING EVENTS")
+    this.stopEventPollingInterval()
+  },
 }
 </script>

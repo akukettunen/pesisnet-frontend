@@ -3,6 +3,7 @@ import './assets/sass/style.scss'
 import iframeResize from 'iframe-resizer/js/iframeResizer'
 import VueSelect from "vue-select";
 import "vue-select/dist/vue-select.css";
+// import { createMetaManager, plugin as metaPlugin } from 'vue-meta'
 
 const resize = {
   mounted(el, binding) {

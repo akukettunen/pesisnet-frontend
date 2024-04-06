@@ -7,7 +7,7 @@
         :style="`height: ${dim+20}px; width: ${dim+20}px;`"
       >
         <v-img
-          v-if="!loading_game && team.sport_club"
+          v-if="!loading_game && team && team.sport_club"
           class="align-self-center" 
           style="border-radius: 20px;" 
           :height="dim" :width="dim"

@@ -1,8 +1,10 @@
 <template>
   <div style="position: relative;">
-    <!-- <div>
-      {{opened_event}}
-    </div> -->
+    <div>
+      {{bases}}
+      {{ home_team_id }}
+      {{ away_team_id }}
+    </div>
     <!-- <div v-for="(hit, i) in hits" :key="`hit${i}`" :style="`position: absolute; top: ${height * hit.y - 10}px; left: ${width * hit.x - 10}px; z-index: 1;`">
       {
         type: "palo",
@@ -42,7 +44,7 @@
       :key="player" 
       :id="`player_${player}`"
     >
-      <player-badge :player_id="player"/>
+      <player-badge :player_id="player" :team_id="hitting_team_id"/>
     </v-sheet>
     <!-- <div class="gf-player">
       <div class="gf-player-left">
@@ -76,12 +78,14 @@ export default {
     second_base: { x: 0.7 ,y: 0.3 },
     third_base: { x: 0 ,y: 0.31 },
     last_base: { x: 0.2 ,y: 0.8 },
-    bases: [null, null, null, null, null]
+    bases: [null, null, null, null, null],
+    hitting_team_id: null
   }),
   methods: {
     handleEvent(event) {
       const eventIndex = [...this.reversed_events].findIndex(e => e.id === event.id)
       const previousEvent = [...this.reversed_events][eventIndex + 1]
+      this.hitting_team_id = event.team
 
       const inningChanged =
         previousEvent.period != event.period
@@ -117,6 +121,9 @@ export default {
       })
     },
     handleBasesChanges(ne, prev) {
+      ne = Array(5).fill(null).map((_, index) => ne[index] || null);
+      prev = Array(5).fill(null).map((_, index) => prev[index] || null);
+
       prev.forEach((id, i) => {
         if(!id) return 
         switch(i) {
@@ -218,6 +225,8 @@ export default {
   computed: {
     ...mapGetters('game', [
       'game',
+      'home_team_id',
+      'away_team_id',
       'opened_event',
       'inning_events_by_event',
       'events',

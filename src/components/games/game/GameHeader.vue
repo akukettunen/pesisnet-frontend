@@ -37,7 +37,7 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 import date from 'date-and-time'
 import { result } from '@/utils/result'
 import GameHeaderTeam from '@/components/games/game/GameHeaderTeam.vue'
@@ -67,7 +67,10 @@ export default {
       if(diff == '-2') return 'Ylihuomenna'
 
       return date.format(new Date(d), 'DD.MM.')
-    }
+    },
+    ...mapActions('game', [
+      'stopEventPollingInterval'
+    ])
   }
 }
 </script>
