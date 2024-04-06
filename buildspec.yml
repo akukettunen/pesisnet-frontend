@@ -1,14 +1,20 @@
 version: 0.2
+
 phases:
   install:
     runtime-versions:
-      nodejs: 14
+      nodejs: 12
     commands:
+      # Install your project's dependencies
       - npm install
   build:
     commands:
+      # Build your Vue.js application for production
       - npm run build
+
 artifacts:
   files:
+    # Include all files in the dist directory
     - '**/*'
-  base-directory: 'dist'  # This line could be problematic if improperly indented or formatted.
+  # Specify the directory where build output is stored
+  base-directory: 'dist'
