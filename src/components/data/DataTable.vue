@@ -3,34 +3,68 @@
     <div class="text-h5 mb-4 text-center">
       {{ data.title }}
     </div>
-    <div class="dt-table">
-      <div class="dt-table-locked">
-        <data-table-column
-          @cell-clicked="$emit('cell-clicked', $event)"
-          v-for="(header, i) in locked_headers" 
-          :data="data.data" 
-          :header="header"
-          :key="i + 'header'"
-        />
+    <v-skeleton-loader
+      type="list-item-three-line	, list-item-three-line	, list-item-three-line	"
+      :style="`width: 100%; max-width: calc(100vw - 80px); justify-content: center; display: flex;`"
+      :loading="loading"
+    >
+      <div class="dt-table">
+        <div class="dt-table-locked" >
+          <data-table-column
+            @cell-clicked="$emit('cell-clicked', $event)"
+            v-for="(header, i) in locked_headers" 
+            :data="data.data" 
+            :header="header"
+            :key="i + 'header'"
+            :density="density"
+          />
+        </div>
+        <div class="dt-table-scroll">
+            <data-table-column
+            @cell-clicked="$emit('cell-clicked', $event)" 
+            v-for="(header, i) in unlocked_headers" 
+            :data="data.data" 
+            :header="header"
+            :key="i + 'header'"
+            :density="density"
+          />
+        </div>
       </div>
-      <div class="dt-table-scroll">
-        <data-table-column
-          @cell-clicked="$emit('cell-clicked', $event)" 
-          v-for="(header, i) in unlocked_headers" 
-          :data="data.data" 
-          :header="header"
-          :key="i + 'header'"
-        />
-      </div>
-    </div>
+    </v-skeleton-loader>
   </v-sheet>
 </template>
 
 <script>
+/*
+{
+  headers: [
+    {
+      key: "position",
+      text: "Short text",
+      longs_text: "Tooltip text"
+    },
+    {
+      key: "scores",
+      text: "S",
+      longs_text: "Lyödyt juoksut"
+    }
+  ],
+  data: [
+    {
+      "position": 0,
+      "scores": 5
+    }
+  ]
+}
+*/
+
 import DataTableColumn from './DataTableColumn.vue'
 export default {
   components: { DataTableColumn },
-  props: ['data'],
+  props: ['data', 'density', 'loading'],
+  /*
+    headers
+  */
   computed: {
     locked_headers() {
       let locked = []

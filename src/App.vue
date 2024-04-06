@@ -35,7 +35,11 @@
           </v-btn>
         </v-sheet>
       </v-app-bar>
-      <v-app-bar style="overflow-x: scroll;" :height="$vuetify.display.mobile ? '30' : '60'" v-if="$route.meta.show_news_bar">
+      <v-app-bar 
+        style="overflow-x: scroll;" 
+        :height="$vuetify.display.mobile ? '50' : '60'" 
+        v-if="$route.meta.show_news_bar"
+      >
         <v-btn 
           v-for="btn in news_buttons" 
           :active="btn.active"
@@ -54,7 +58,12 @@
           </v-tooltip>
         </v-btn>
       </v-app-bar>
-      <v-app-bar class="pl-2 d-flex" style="flex-wrap: wrap;" v-if="$route.meta.show_data_bar">
+      <v-app-bar 
+        :height="$vuetify.display.mobile ? '50' : '60'" 
+        class="pl-2 d-flex" 
+        style="flex-wrap: wrap; overflow-x: scroll;" 
+        v-if="$route.meta.show_data_bar"
+      >
         <div style="position: relative; display: flex; flex-direction: column;" v-for="btn in stats_buttons" :key="btn.text + 'news_button'">
           <v-chip variant="text" size="x-small" style="bottom: -16px; left: calc(50% - 53px); position: absolute; text-align: center;" v-if="btn.coming_soon">
             Tulossa toukokuussa!

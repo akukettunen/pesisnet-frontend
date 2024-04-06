@@ -23,6 +23,8 @@ const game = {
     RESET_GAME_DATA(state) {
       state.game = {}
       state.game_data = {}
+      state.events = [],
+      state.finished = false
     },
     SET_GAME(state, val) {
       state.game = val

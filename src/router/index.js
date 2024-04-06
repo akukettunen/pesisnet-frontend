@@ -48,6 +48,14 @@ const routes = [
         }
       },
       {
+        path: 'scores',
+        name: 'Scores',
+        component: () => import('@/views/data/Scores.vue'),
+        meta: {
+          show_data_bar: true,
+        }
+      },
+      {
         path: 'player-cards',
         name: 'PlayerCards',
         component: () => import('@/views/Data.vue'),

@@ -5,7 +5,8 @@ const standings = {
   state: () => ({
     boards: null,
     loading_boards: false,
-    matches: null
+    matches: null,
+    data: null
   }),
   mutations: {
     SET_BOARD(state, val) {
@@ -16,6 +17,9 @@ const standings = {
     },
     SET_MATCHES(state, val) {
       state.matches = val
+    },
+    SET_DATA(state, val) {
+      state.data = val
     }
   },
   actions: {
@@ -29,12 +33,25 @@ const standings = {
         .finally(() => {
           commit('SET_LOADING_BOARD', false)
         })
-    }
+    },
+    getScores({ commit }, { season_id, series_id, phase_id}) {
+      commit('SET_LOADING_BOARD', true)
+      a(`/data/scores?seasonId=${season_id}&seasonSeriesId=${series_id}&seasonSeriesPhaseId=${phase_id}`)
+        .then(e => {
+          console.log(e.data)
+          commit('SET_DATA', e.data)
+          commit('SET_MATCHES', e.data.matchSeries)
+        })
+        .finally(() => {
+          commit('SET_LOADING_BOARD', false)
+        })
+    },
   },
   getters: {
     boards: state => state.boards,
     matches: state => state.matches,
-    loading_boards: state => state.loading_boards
+    loading_boards: state => state.loading_boards,
+    data: state => state.data
   }
 }
 

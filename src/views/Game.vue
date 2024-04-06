@@ -6,7 +6,11 @@
       <!-- Fin {{ finished }} -->
       <div></div>
       <GameLiveBar/>
-      <GameEvents/>
+      <v-expand-transition>
+        <GameEvents
+          v-if="events && events.length"
+        />
+      </v-expand-transition>
       <!-- <div class="my-5" v-for="a in happening_type_events" :key="a">
         {{ a }}
       </div>

@@ -1,6 +1,6 @@
 <template>
   <v-sheet class="dt-col" :key="col.key">
-    <v-sheet :class="{ 'dt-col-cell--left': col.left }" class="dt-col-cell dt-col-cell--header">
+    <v-sheet :style="cellStyle" :class="{ 'dt-col-cell--left': col.left }" class="dt-col-cell dt-col-cell--header">
       {{ col.text }}
       <v-tooltip
         v-if="col.long_text"
@@ -9,7 +9,14 @@
         {{ col.long_text }}
       </v-tooltip>
     </v-sheet>
-    <v-sheet @click="$emit('cell-clicked', { column: col.key, row: cell })" :class="{ 'dt-col-cell--left': col.left }" class="dt-col-cell dt-col-cell" v-for="cell in data" :key="cell[col]">
+    <v-sheet 
+      v-for="cell in data" 
+      @click="$emit('cell-clicked', { column: col.key, row: cell })" 
+      :class="{ 'dt-col-cell--left': col.left }"
+      class="dt-col-cell dt-col-cell" 
+      :style="cellStyle"
+      :key="cell[col]"
+    >
       {{ cell[col.key] }}
     </v-sheet>
   </v-sheet>
@@ -21,6 +28,9 @@ export default {
   computed: {
     col() {
       return this.header
+    },
+    cellStyle() {
+      return `padding: ${this.density == 'sparse' ? 5 : 1}px ${this.density == 'sparse' ? 15 : 4}px;`
     }
   }
 }
@@ -36,7 +46,6 @@ export default {
       text-wrap: nowrap;
       max-width: 200px;
       // border: 1px solid rgba(255, 255, 255, 0.333);
-      padding: 0px 4px;
       cursor: pointer;
       transition-duration: 0.2s;
       text-align: center;

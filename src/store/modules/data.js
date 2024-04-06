@@ -94,6 +94,12 @@ const data = {
           value: s.id,
           title: s.name,
         }
+      }).sort((a, b) => {
+        if(a.title == 'Runkosarja') return -1
+        if(b.title == 'Runkosarja') return 1
+        if(a.title == 'Itä-Länsi') return 1
+        if(b.title == 'Itä-Länsi') return -1
+        return 0
       })
     },
     maps: state => state.maps,
