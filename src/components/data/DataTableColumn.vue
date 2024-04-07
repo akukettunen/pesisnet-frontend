@@ -16,6 +16,7 @@
       class="dt-col-cell dt-col-cell" 
       :style="cellStyle"
       :key="cell[col]"
+      style="text-wrap: nowrap;"
     >
       {{ cell[col.key] }}
     </v-sheet>

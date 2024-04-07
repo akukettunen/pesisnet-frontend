@@ -1,7 +1,7 @@
 <template>
   <v-row class="my-5">
     <v-col order-md="1" order="2" cols="12" md="6">
-      <v-sheet elevation="2" style="max-height: 500px; overflow-y: scroll; height: 100%;">
+      <v-sheet class="mx-5" elevation="2" style="max-height: 500px; overflow-y: scroll; height: 100%;">
         <transition-group name="list">
           <div class="my-2 px-5 list-item" v-for="(event) in reversed_events" :key="event.id + 'event'">
             <game-event

@@ -1,7 +1,7 @@
 <template>
   <v-sheet
     :elevation="highlighted ? '5' : '0'"
-    :style="`align-self: center; font-size: ${ large ? '20px' :  $vuetify.display.mobile ? '14px' : '14px' }; cursor: ${cursor ? cursor : 'default'}; ${styling}`"
+    :style="`align-self: center; font-size: ${ large ? '20px' :  $vuetify.display.mobile ? '10px' : '14px' }; cursor: ${cursor ? cursor : 'default'}; ${styling}`"
     class="sport-font point-box align-self-center"
   >
     {{ value }}

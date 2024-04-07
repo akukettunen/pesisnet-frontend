@@ -1,7 +1,7 @@
 <template>
   <v-container fluid class="px-0" style="padding-top: 64px; max-width: 1000px;">
     <!-- {{ game }} -->
-    <v-sheet class="pa-10" style="height: 100%;">
+    <v-sheet class="pa-2" style="height: 100%;">
       <GameHeader/>
       <!-- Fin {{ finished }} -->
       <div></div>
@@ -21,7 +21,7 @@
         <v-col v-for="side in ['home', 'away']" :key="`${side}-game-data-table-stats`" cols="12" md="6">
           <v-skeleton-loader
             type="list-item-three-line	, list-item-three-line	, list-item-three-line	"
-            style="width: 100%; max-width: calc(100vw - 80px); justify-content: center; display: flex;"
+            style="width: 100%; max-width: calc(100vw - 32px); justify-content: center; display: flex;"
             :loading="loading_game"
           >
             <DataTable @cell-clicked="handleCellClicked($event)" :data="stats_table(side)" />

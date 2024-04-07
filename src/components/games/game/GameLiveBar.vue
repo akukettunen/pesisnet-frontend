@@ -4,8 +4,8 @@
       <span class="mr-5" v-for="(runs, period) in game.liveResult.runs" :key="period + 'runs'">
         <PointBoxes v-for="(these, inning) in runs['home']" :key="`${inning}-block-tiles`">
           <!-- {{these ? these : 'null'}} -->
-            <PointBox :highlighted="is_highlighted(period, inning, 'home')" :key="`${period}-${inning}-runstile-home`" cursor="pointer" :large="true" :value="runs['home'][inning] != null ? runs['home'][inning] : '-'"></PointBox>
-            <PointBox :highlighted="is_highlighted(period, inning, 'away')" :key="`${period}-${inning}-runstile-away`" cursor="pointer" :large="true" :value="runs['away'][inning] != null ? runs['away'][inning] : '-'"></PointBox>
+            <PointBox :highlighted="is_highlighted(period, inning, 'home')" :key="`${period}-${inning}-runstile-home`" cursor="pointer" :large="$vuetify.display.mobile" :value="runs['home'][inning] != null ? runs['home'][inning] : '-'"></PointBox>
+            <PointBox :highlighted="is_highlighted(period, inning, 'away')" :key="`${period}-${inning}-runstile-away`" cursor="pointer" :large="$vuetify.display.mobile" :value="runs['away'][inning] != null ? runs['away'][inning] : '-'"></PointBox>
         </PointBoxes>
         <PointBoxes v-if="runs['home'].length > 1">
           <PointBox cursor="pointer" :large="true" :color="game.live ? 'secondary' : 'primary'" :value="get_runs(runs['home'])"></PointBox>
@@ -13,10 +13,10 @@
         </PointBoxes>
       </span>
     </span>
-    <PointBoxes>
+    <!-- <PointBoxes>
       <PointBox cursor="pointer" :large="true" :color="game.live ? 'secondary' : 'primary'" :value="game.liveResult.periods.home"></PointBox>
       <PointBox cursor="pointer" :large="true" :color="game.live ? 'secondary' : 'primary'" :value="game.liveResult.periods.away"></PointBox>
-    </PointBoxes>
+    </PointBoxes> -->
   </div>
 </template>
 
