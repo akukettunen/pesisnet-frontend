@@ -61,10 +61,12 @@ const game = {
     }
   },
   actions: {
-    getGameData({ commit, getters, dispatch }, id) {
-      commit('SET_LOADING_GAME_ID', id)
-      commit('SET_LOADING_GAME', true)
-      commit('RESET_GAME_DATA')
+    getGameData({ commit, getters, dispatch }, { id, no_fefresh }) {
+      if(!no_fefresh) {
+        commit('SET_LOADING_GAME_ID', id)
+        commit('SET_LOADING_GAME', true)
+        commit('RESET_GAME_DATA')
+      }
 
       a(`/games/${id}`)
         .then(e => {
@@ -82,11 +84,13 @@ const game = {
           commit('SET_FINISHED', e.data.finished)
           commit('SET_GAME_DATA', e.data.gameData)
 
-          nextTick(() => {
-            if(!getters.finished && getters.game_data.liveResult) {
-              dispatch('startEventPolling')
-            }
-          })
+          if(!no_fefresh) {
+            nextTick(() => {
+              if(!getters.finished && getters.game_data.liveResult) {
+                dispatch('startEventPolling')
+              }
+            })
+          }
 
         })
         .finally(() => {
@@ -99,7 +103,7 @@ const game = {
       console.log("START EVENT POLLING")
       const interval = setInterval(() => {
         dispatch('pollGameEvents')
-      }, 4000)
+      }, 3000)
 
       commit('SET_EVENT_POLLING_INTERVAL', interval)
     },
@@ -107,20 +111,24 @@ const game = {
       clearInterval(getters.event_polling_interval);
       commit('SET_EVENT_POLLING_INTERVAL', null)
     },
-    pollGameEvents({ getters, commit }) {
+    pollGameEvents({ getters, dispatch }) {
       console.log("POLL EVENTS")
       const id = getters.game?.id
       if(!id) return
 
-      const time = encodeURIComponent(dayjs().format('YYYY-MM-DDTHH:mm:ssZ'))
+      dispatch('getGameData', { id, no_fefresh: true })
 
-      a(`/games/poll/${id}?after=${time}`)
-        .then(e => {
-          commit('SET_EVENTS', e.data.events)
-        })
-        .catch(e => {
-          console.error(e)
-        })
+      // const time = encodeURIComponent(dayjs().format('YYYY-MM-DDTHH:mm:ssZ'))
+
+      // a(`/games/poll/${id}?after=${time}`)
+      //   .then(e => {
+      //     commit('SET_EVENTS', e.data.events)
+      //   })
+      //   .catch(e => {
+      //     console.error(e)
+      //   })
+
+      
     },
     startEventSimulation({ dispatch }) {
       setInterval(() => {
@@ -343,7 +351,7 @@ const game = {
       return `${s}/${s + f}`
     },
     outsUpToEvent: (_, getters) => (event) => {
-      const evs = getters.inning_events_by_event(event).reverse()
+      const evs = getters.inning_events_by_event(event)
 
       let outs = 0
 
@@ -352,7 +360,7 @@ const game = {
 
         ev.events.forEach((t, i) => {
           t.texts.forEach((text, i2) => {
-            if(text.type == 'stat' && text.out) {
+            if(text.type == 'stat' && !!text.out) {
               outs++
             }
           })

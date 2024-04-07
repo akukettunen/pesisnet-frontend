@@ -49,7 +49,7 @@ export default {
     event_polling_interval: null
   }),
   created() {
-    this.getGameData(this.$route.params.id)
+    this.getGameData({ id: this.$route.params.id })
   },
   methods: {
     ...mapActions('game', [

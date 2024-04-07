@@ -14,7 +14,7 @@ const games = {
       { text: 'Lehdet', feedUrl: 'google.fi', active: false },
       { text: 'Twitter', feedUrl: 'google.fi', active: false, icon: 'mdi-twitter', icon_color: 'blue' },
       { text: 'YouTube', feedUrl: 'google.fi', active: false, icon: 'mdi-youtube', icon_color: 'red', dropdown: true },
-      { text: 'Joukkueet', feedUrl: 'google.fi', active: false, dropdown: true },
+      { text: 'Joukkueet', feedUrl: 'https://rss.app/embed/v1/wall/9vJjmyNTtovXSq8J', active: false, dropdown: true },
     ],
     chosen_button: null
   }),

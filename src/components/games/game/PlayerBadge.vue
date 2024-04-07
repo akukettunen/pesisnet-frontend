@@ -38,16 +38,9 @@ export default {
       if(!this.game || !this.game['home']) return {}
       if(!this.game_data || !this.game_data.liveResult) return {}
 
-      console.log("Player id: ", this.player_id)
-      console.log('Hitting team_id: ', this.team_id)
-      console.log('Home team id: ', this.home_team_id)
-      console.log('Away team id: ', this.away_team_id)
-
       let players_home = this.game['home'].players.map(p => {return {...p, side: 'home'}})
       let players_away = this.game['away'].players.map(p => {return {...p, side: 'away'}})
       let players = this.team_id == this.home_team_id ? players_home : players_away
-
-      console.log(players)
 
       return players
               .find(p => {

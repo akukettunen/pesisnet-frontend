@@ -34,6 +34,13 @@ export default {
     GameField,
     GameEvent
   },
+  created() {
+    this.$nextTick(() => {
+      if(!this.events.length) return
+      const new_event = [...this.events][this.events.length - 1]
+      this.$refs.field.handleEvent(new_event)
+    })
+  },
   data: () => ({
     width: 275,
     height: 400
@@ -56,8 +63,8 @@ export default {
   },
   watch: {
     'events': {
-      handler(newVal) {
-        if(newVal.length <= 1) return
+      handler(newVal, oldVal) {
+        if(newVal.length <= 1 || newVal.length === oldVal.length) return
         
         this.$nextTick(() => {
           const new_event = [...newVal][newVal.length - 1]

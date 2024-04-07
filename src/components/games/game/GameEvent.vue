@@ -1,6 +1,6 @@
 <template>
   <v-sheet @click="openEvent(event); $emit('event-clicked', event)" style="cursor: pointer;" >
-    <!-- {{ event.id }} -->
+    <!-- {{ event }} -->
     <v-sheet 
       v-for="(instant, i) in reversed_events" 
       style="cursor: pointer;" 

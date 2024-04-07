@@ -2,7 +2,7 @@
   <v-sheet fluid>
     <v-layout>
       <v-app-bar color="primary-darken-1" name="app-bar" :elevation="$route.meta.show_news_bar ? '0' : '2'">
-        <v-app-bar-title v-if="!$vuetify.display.mobile" style="flex-shrink: 1;">
+        <v-app-bar-title class="d-flex" v-if="!$vuetify.display.mobile" style="flex-shrink: 1; flex-direction: row;">
             <v-img
               @click="$router.push('/')"
               height="50"
@@ -16,6 +16,11 @@
                 location="end"
               >Peleihin</v-tooltip>
             </v-img>
+            <!-- <div>
+              <v-app-bar-title style="flex-shrink: 1;" class="sport-font">
+                PesisNet
+              </v-app-bar-title>
+            </div> -->
         </v-app-bar-title>
         <v-sheet color="primary-darken-1" height="90%" class="mx-auto">
           <v-btn
@@ -35,7 +40,7 @@
           </v-btn>
         </v-sheet>
       </v-app-bar>
-      <v-app-bar 
+      <v-app-bar
         style="overflow-x: scroll;" 
         :height="$vuetify.display.mobile ? '50' : '60'" 
         v-if="$route.meta.show_news_bar"
