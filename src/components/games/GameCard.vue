@@ -8,9 +8,6 @@
         lastPeriod 1 = 1. jakso pelattu, toinen menossa
         lastPeriodFinished true -> tauolla
       -->
-      <span :style="`color: ${game.live ? 'red' : ''}`" class="d-flex mr-4 sport-font" style="align-items: center;">
-        {{ pretty_day_from_date(game.date) }}
-      </span>
       <v-sheet class="d-flex-column">
         <game-card-team :team="game.home"></game-card-team>
         <game-card-team :team="game.away"></game-card-team>
@@ -43,6 +40,9 @@
           </PointBoxes>
         </div>
       </div>
+      <span v-else :style="`color: ${game.live ? 'red' : ''}`" class="d-flex mr-4 sport-font" style="align-items: center;">
+        {{ pretty_day_from_date(game.date) }}
+      </span>
     </v-sheet>
     <!-- {{ game }} -->
     <!-- {{ game.result.details }} -->
