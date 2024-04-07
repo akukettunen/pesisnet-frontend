@@ -1,7 +1,7 @@
 <template>
   <v-card flat>
     <v-sheet class="my-3">
-      <span class="text-h6">
+      <span class="text-h6 pl-2">
         {{ seasonSeries.name }}
       </span>
       <span class="ml-5">

@@ -58,10 +58,10 @@ export default {
       y: 0
     },
     prev_rot: 1,
-    home_base: { x: 0.5 ,y: 0.9 },
-    first_base: { x: 0.2 ,y: 0.55 },
-    second_base: { x: 0.7 ,y: 0.3 },
-    third_base: { x: 0 ,y: 0.31 },
+    home_base: { x: 0.4 ,y: 0.9 },
+    first_base: { x: 0.2 ,y: 0.60 },
+    second_base: { x: 0.6 ,y: 0.37 },
+    third_base: { x: -0.1 ,y: 0.37 },
     last_base: { x: 0.2 ,y: 0.8 },
     bases: [null, null, null, null, null],
     hitting_team_id: null

@@ -1,6 +1,6 @@
 <template>
-  <v-sheet v-if="player" style="background-color: rgba(0, 0, 0, 0)">
-    <v-avatar size="45px" color="secondary">
+  <div v-if="player" style="background-color: rgba(0, 0, 0, 0); display: flex; align-items: center;">
+    <v-avatar size="40px" color="secondary" style="border: 2px solid lightgrey;">
       <div 
         :style="{ 
           'height': '50px',
@@ -16,11 +16,11 @@
       />
       <v-icon size="30" v-else>mdi-account-outline</v-icon>
     </v-avatar>
-    <v-chip class="pl-3" style="opacity: 1;" label flat>
+    <div class="pr-3 pl-5 sport-font" style="font-size: 12px; border-radius: 5px; border: 2px solid lightgrey; background-color: white; text-wrap: nowrap; text-align: center; height: 20px; line-height: 15px; margin-left: -10px;">
       {{ player.first_name[0] }}. {{ player.last_name }}
-    </v-chip>
+    </div>
     <!-- {{ player }} -->
-  </v-sheet>
+  </div>
 </template>
 
 <script>

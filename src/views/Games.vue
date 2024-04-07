@@ -1,6 +1,6 @@
 <!-- eslint-disable vue/multi-word-component-names -->
 <template>
-  <v-container style="padding-top: 100px; max-width: 1000px;">
+  <v-container :style="`padding: ${$vuetify.display.mobile ? '0px' : ''}`" fluid style="padding-top: 100px; max-width: 1000px;">
     <DateChooser />
     <v-sheet v-if="!loading_games && date_games.organizers">
       <v-expansion-panels accordion v-model="panels" multiple>
@@ -15,7 +15,7 @@
               {{ organizer.name }}
             </span>
           </v-expansion-panel-title>
-          <v-expansion-panel-text style="padding: 0 !important;">
+          <v-expansion-panel-text style="padding: 0px !important;">
             <Organizer
               :organizer="organizer"
             />
@@ -70,3 +70,9 @@ export default {
   }
 }
 </script>
+
+<style lang="scss">
+.v-expansion-panel-text > .v-expansion-panel-text__wrapper {
+  padding: 0 !important;
+}
+</style>

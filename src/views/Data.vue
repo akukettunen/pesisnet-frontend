@@ -98,8 +98,9 @@ export default {
       'initAllPlayers'
     ]),
     inputChanged(e) {
-      this.player_name_typed = e
-      this.getPlayers(e)
+      if(!e) this.player_name_typed = null
+      this.player_name_typed = e.toLowerCase()
+      this.getPlayers(e.toLowerCase())
     },
     ...mapActions('players', [
       'getPlayers'

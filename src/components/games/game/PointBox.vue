@@ -1,11 +1,10 @@
 <template>
   <v-sheet
     :elevation="highlighted ? '5' : '0'"
-    :style="`align-self: center; font-size: ${ large ? '20px' :  $vuetify.display.mobile ? '10px' : '14px' }; cursor: ${cursor ? cursor : 'default'}; ${styling}`"
+    :style="`align-self: center; font-size: ${ large ? '20px' :  $vuetify.display.mobile ? '12px' : '14px' }; cursor: ${cursor ? cursor : 'default'}; ${styling}`"
     class="sport-font point-box align-self-center"
   >
     {{ value }}
-    {{this.$vuetify.theme.dark}}
   </v-sheet>
 </template>
 
@@ -14,9 +13,18 @@ export default {
   props: ['value', 'large', 'cursor', 'highlighted'],
   computed: {
     styling() {
+      let style = ''
       if(this.highlighted) {
-        return `border: 1px solid ${!this.$vuetify.theme.dark ? 'white' : 'black'}`
+        style += `border: 1px solid ${!this.$vuetify.theme.dark ? 'white' : 'black'}; `
       }
+
+      if(!this.$vuetify.display.mobile) {
+        style += `padding: 0px 5px; border-radius: 5px;`
+      } else {
+        style += `padding: 0px 2px; border-radius: 2px;`
+      }
+
+      return style
     }
   }
 }
@@ -25,8 +33,6 @@ export default {
 <style lang="scss">
 .point-box {
   // font-weight: bold;
-  padding: 0px 5px;
-  border-radius: 5px;
   margin: 2px;
   text-align: center;
 }

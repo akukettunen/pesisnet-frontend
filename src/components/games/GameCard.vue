@@ -23,7 +23,7 @@
             <PointBox :color="game.live ? 'secondary' : 'primary'" :value="game.liveResult.periods.home"></PointBox>
             <PointBox :color="game.live ? 'secondary' : 'primary'" :value="game.liveResult.periods.away"></PointBox>
           </PointBoxes>
-          <span v-if="!$vuetify.display.mobile">
+          <span v-if="!$vuetify.display.mobile || game.liveResult.runs.length < 5">
             <PointBoxes v-for="(runs, i) in game.liveResult.runs.filter(r => r.home[0] != null || r.away[0] != null)" :key="i + 'runs'">
               <PointBox :value="get_runs(runs.home)"></PointBox>
               <PointBox :value="get_runs(runs.away)"></PointBox>
