@@ -1,6 +1,19 @@
 <template>
   <v-sheet @click="openEvent(event); $emit('event-clicked', event)" style="cursor: pointer;" >
     <!-- {{ event }} -->
+    <!-- { 
+      "id": 0, 
+      "groupType": "is", 
+      "period": 0, 
+      "inning": 3, 
+      "batTurn": 1, 
+      "team": 12485, 
+      "batter": null, 
+      "pairIndex": null, 
+      "hitNumber": null, 
+      "hit": null, 
+      "events": [ { "texts": [ { "type": "team", "id": 12485 }, "muutti lyöntijärjestystä. Uusi lyöntijärjestys:", { "type": "substitution", "as": { "id": 0, "eventType": "is", "newLineUp": [ 1, 2, 3, 4, 12, 6, 7, 8, 9, 10, 11, 5 ], "pitcher": 9 }, "team": 12485, "newLineUp": [ 1, 2, 3, 4, 12, 6, 7, 8, 9, 10, 11, 5 ], "pitcher": 9 } ], "runnersAtBases": [ null, null, null, null, null ] } ], "timestamp": null, "created": 1712498266, "updated": 1712498266 } -->
+
     <v-sheet 
       v-for="(instant, i) in reversed_events" 
       style="cursor: pointer;" 
@@ -46,6 +59,20 @@ export default {
         else if (t.type == 'player') {
           const side = this.game.home?.id == t.team ? 'home' : 'away'
           return this.game[side]?.players.find(p => (p.id == t.id && t.id) || (p.number == t.number && t.number))?.name
+        } else if(t.type == 'team') {
+          const side = this.game.home?.id == t.team ? 'home' : 'away'
+          return this.game[side].name
+        } else if(t.type == "substitution") {
+          const side = this.game.home?.id == t.team ? 'home' : 'away'
+          if(!side) return
+
+          const lineup = t.as?.newLineUp || t.newLineUp
+          const names = lineup.map((id, i) => {
+            let val = (i + 1) + '. ' + this.game[side].players.find(p => p.id == id || p.number == id).name + ( i + 1 == t.as?.newLineUp.length ? '' : ',' )
+            return val
+          })
+
+          return names.join('\n')
         }
         else return t.text
       })

@@ -72,12 +72,14 @@ const game = {
         .then(e => {
           if(getters.loading_game_id != id) return
 
-          const simulate = false
+          console.log('got events')
+            const simulate = false
           if(simulate) {
             commit('SET_EVENTS_TO_BE_SIMULATED', e.data.events)
             dispatch('startEventSimulation')
-          } else {
+          } else if(e.data.events.length > getters.events.length) {
             commit('SET_EVENTS', e.data.events)
+            console.log('set events')
           }
 
           commit('SET_GAME', e.data.game)
@@ -100,7 +102,6 @@ const game = {
         })
     },
     startEventPolling({ commit, dispatch }) {
-      console.log("START EVENT POLLING")
       const interval = setInterval(() => {
         dispatch('pollGameEvents')
       }, 3000)
@@ -112,7 +113,6 @@ const game = {
       commit('SET_EVENT_POLLING_INTERVAL', null)
     },
     pollGameEvents({ getters, dispatch }) {
-      console.log("POLL EVENTS")
       const id = getters.game?.id
       if(!id) return
 
