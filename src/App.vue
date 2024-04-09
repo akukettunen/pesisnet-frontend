@@ -130,7 +130,7 @@ export default {
       { text: 'KL pesänväleittäin', path: '/hps-by-base', active: false, dropdown: false, tooltip: "Kärkilyönnit pesänväleittäin" },
       { text: 'Etenemisajat', path: '/runtimes', active: false, dropdown: false },
       { text: 'Otteluohjelmat', path: '/programmes', active: false, dropdown: false },
-      { text: 'Lukkarivertailu', path: '/pitchers', active: false, dropdown: false, coming_soon: true },
+      { text: 'Lukkarivertailu', path: '/pitchers', active: false, dropdown: false},
       { text: 'Ulkopelitilastot', path: '/outfield', active: false, dropdown: false, coming_soon: true },
       { text: 'UP-Suoritusajat', path: '/performance-times', active: false, dropdown: false, coming_soon: true },
     ],

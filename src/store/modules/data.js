@@ -7,7 +7,9 @@ const data = {
     maps: null,
     season_series_id: null,
     phase_id: null,
-    loading_maps: false
+    loading_maps: false,
+    pitcher_data: null,
+    loading_pitcher_data: false
   }),
   mutations: {
     SET_SEASON_ID(state, id) {
@@ -24,6 +26,12 @@ const data = {
     },
     SET_LOADING_MAPS(state, val) {
       state.loading_maps = val
+    },
+    SET_PITCHER_DATA(state, val) {
+      state.pitcher_data = val
+    },
+    SET_LOADING_PITCHER_DATA(state, val) {
+      state.loading_pitcher_data = val
     }
   },
   actions: {
@@ -58,12 +66,27 @@ const data = {
         .finally(() => {
           commit('SET_LOADING_MAPS', false)
         })
+    },
+    getPitcherData({ commit }, { league_id, season }) {
+      commit('SET_LOADING_PITCHER_DATA', true)
+      a(`/data/pitchers?league_id=${league_id}&season=${season}&filter_amount=20`)
+        .then(e => {
+          commit('SET_PITCHER_DATA', e.data)
+        })
+        .catch(e => {
+          console.log(e)
+        })
+        .finally(() => {
+          commit('SET_LOADING_PITCHER_DATA', false)
+        })
     }
   },
   getters: {
     season_id: state => state.season_id,
     season_series_id: state => state.season_series_id,
     phase_id: state => state.phase_id,
+    pitcher_data: state => state.pitcher_data,
+    loading_pitcher_data: state => state.loading_pitcher_data,
     season_serieses_raw: (_, getters) => id => {
       if((!getters.season_id && !id) || !getters.maps) return []
 
