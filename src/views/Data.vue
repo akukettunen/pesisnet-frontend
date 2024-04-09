@@ -1,14 +1,14 @@
 <template>
-  <v-container class="mx-auto" style="height: 100%;">
+  <v-container :fluid="$vuetify.display.mobile" class="mx-auto" style="height: 100%; max-width: 100vw;">
     <v-app-bar>
       <v-btn style="padding-top: 100px;"></v-btn>
     </v-app-bar>
-    <v-card max-width="1000" flat class="px-3 mx-auto" style="padding-top: 80px; height: 100%;">
+    <v-card max-width="1000" flat class="px-3 mx-auto" :style="`padding-top: ${$vuetify.display.mobile ? '20px' : '80px'}; height: 100%;`">
       <v-card style="z-index: 10;" class="pa-2 overflow-visible" flat>
-        <v-card-title>
+        <!-- <v-card-title>
           <v-icon>mdi-account-outline</v-icon>
           Pelaajahaku
-        </v-card-title>
+        </v-card-title> -->
         <v-sheet class="py-3 flex-column">
           <v-card-text>Kokeile näitä</v-card-text>
           <v-btn
@@ -40,7 +40,27 @@
             @option:selected="player_name = chosen_player.label"
             v-model="chosen_player"
             :filter="filterPlayers"
-          ></b-select>
+          >
+            <template v-slot:no-options="{ search, searching }">
+              <template v-if="searching && search.length > 1">
+                Ei tuloksia haulle <em>{{ search }}</em
+                >.
+              </template>
+              <em v-else style="opacity: 0.5">Kirjoita kaksi kirjainta</em>
+            </template>
+          </b-select>
+
+          <v-select 
+            class="mt-3"
+            v-model="season"
+            :items="[2020, 2021, 2022, 2023, 2024].reverse()" 
+            variant="outlined" 
+            placeholder="Kausi" 
+            label="Kausi"
+            density="compact"
+          >
+
+          </v-select>
           <!-- <v-text-field
             placeholder="Hae pelaajaa nimellä"
             v-model="player_name_typed"
@@ -73,7 +93,7 @@
 
 <script>
 import PlayerCard from '@/components/players/PlayerCard.vue'
-import { mapActions, mapGetters } from 'vuex'
+import { mapActions, mapGetters, mapMutations } from 'vuex'
 export default {
   components: { PlayerCard },
   created() {
@@ -95,7 +115,11 @@ export default {
   }),
   methods: {
     ...mapActions('players', [
-      'initAllPlayers'
+      'initAllPlayers',
+      'getPlayerData'
+    ]),
+    ...mapMutations('players', [
+      'SET_PLAYER_CARD_SEASON'  
     ]),
     inputChanged(e) {
       if(!e) this.player_name_typed = null
@@ -145,11 +169,27 @@ export default {
         }
       })
     },
+    season: {
+      get() {
+        return this.player_card_season
+      },
+      set(val) {
+        var self = this
+        this.SET_PLAYER_CARD_SEASON(val)
+
+        if(!this.player || !this.player.id) return
+
+        this.$nextTick(() => {
+          self.getPlayerData(self.player.id)
+        })
+      }
+    },
     ...mapGetters('players', [
       'loading_players',
       'players',
       'parsePlayerIdFromName',
-      'player'
+      'player',
+      'player_card_season'
     ]),
     ...mapGetters('data', [
       'maps',

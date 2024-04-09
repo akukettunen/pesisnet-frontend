@@ -11,7 +11,9 @@ const games = {
     events: [],
     run_data: null,
     last_search: '',
-    latest_loading_player_id: null
+    latest_loading_player_id: null,
+    play_data: null,
+    player_card_season: 2023
   }),
   mutations: {
     SET_PLAYERS(state, val) {
@@ -22,6 +24,9 @@ const games = {
     },
     SET_RUN_DATA(state, val) {
       state.run_data = val
+    },
+    SET_PLAY_DATA(state, val) {
+      state.play_data = val
     },
     SET_LOADING_PLAYERS(state, val) {
       state.loading_players = val
@@ -37,6 +42,9 @@ const games = {
     },
     SET_LATEST_LOADING_PLAYER_ID(state, val) {
       state.latest_loading_player_id = val
+    },
+    SET_PLAYER_CARD_SEASON(state, val) {
+      state.player_card_season = val
     }
   },
   actions: {
@@ -70,20 +78,24 @@ const games = {
           commit('SET_LOADING_PLAYERS', false)
         })
     },
-    getPlayerData({ commit, getters }, player_id, season) {
+    getPlayerData({ commit, getters }, player_id) {
       commit('SET_LOADING_PLAYER', true)
       commit('SET_LATEST_LOADING_PLAYER_ID', player_id)
       commit('SET_PLAYER', null)
       commit('SET_EVENTS', null)
       commit('SET_RUN_DATA', null)
+      commit('SET_PLAY_DATA', null)
+
+      if(!player_id) return
 
       return new Promise((resolve, reject) => {
-        a(`/players/${player_id}?season=${season}`)
+        a(`/players/${player_id}?season=${getters.player_card_season}`)
           .then(e => {
             if(e.data.player.id !== getters.latest_loading_player_id) return
             commit('SET_PLAYER', e.data.player)
             commit('SET_EVENTS', e.data.events_grouped_by_tilanne)
             commit('SET_RUN_DATA', e.data.averages)
+            commit('SET_PLAY_DATA', e.data.average_plays)
             resolve(e)
           })
           .catch(e => {
@@ -101,17 +113,26 @@ const games = {
     latest_loading_player_id: state => state.latest_loading_player_id,
     last_search: state => state.last_search,
     loading_players: state => state.loading_players,
+    player_card_season: state => state.player_card_season,
     run_data: (state) => {
       if(!state.run_data) return null
       var enumerated = { 3: '3 -> K', 2: '2 -> 3', 1: '1 -> 2' }
       return state.run_data.map(r => {
-        console.log(r.base)
         return {
           ...r,
           base: enumerated[r.base]
         }
       })
-
+    },
+    play_data: (state) => {
+      if(!state.play_data) return null
+      var enumerated = { 3: 'Kotiin', 2: 'Kolmospesälle', 1: 'Kakkospesälle' }
+      return state.play_data.map(r => {
+        return {
+          ...r,
+          base: enumerated[r.base]
+        }
+      })
     },
     loading_player: state => state.loading_player,
     parsePlayerIdFromName: () => (name) => {

@@ -5,7 +5,7 @@
         <GameHeaderTeam :points="game_data.liveResult ? game_data.liveResult.periods.home : 0" :team="game_data.home" />
       </v-col>
       <v-col class="d-flex align-center pt-0 pb-5" style="align-items: center; flex-direction: column; justify-content: center;" order="3" order-md="2" md="4" cols="12">
-        <!-- <v-sheet :style="`flex-grow: 0; text-wrap: nowrap; font-size: ${$vuetify.display.mobile ? '16px' : '18px'}`" class="sport-font">
+        <!-- <v-sheet :style="`flex-grow: 0; white-space: nowrap; font-size: ${$vuetify.display.mobile ? '16px' : '18px'}`" class="sport-font">
           {{game_data.result ? `${game_data.result.periods_home} - ${game_data.result.periods_away}` : ''}} 
         </v-sheet> -->
         <!-- "liveResult": { "periods": { "home": 0, "away": 1 }, "runs": [ { "home": [ 1, 0, 2, 0 ], "away": [ 3, 1, 0, null ] }, { "home": [ 0, 1, 0, 0 ], "away": [ 1, 0, 1, 0 ] }, { "home": [ null ], "away": [ null ] }, { "home": [ null ], "away": [ null ] } ], "maxPlayedPeriod": 0, "lastPeriod": 1, "lastPeriodFinished": false, "lastInning": 3, "batTurn": 1, "lastTeam": 12518, "lastTeamKey": "home", "lastEventText": [ "Lyöntivuorossa", "Eetu Venäläinen" ], "lastRAB": [ 5, 6, 3, null, null ], "outs": 1, "finished": false } -->

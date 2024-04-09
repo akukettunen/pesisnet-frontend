@@ -36,7 +36,12 @@
             :size="$vuetify.display.mobile ? 'x-small' : ''"
           >
             <v-icon :class="{'mr-3': !$vuetify.display.mobile}">{{ btn.icon }}</v-icon>
-            {{ btn.text }}
+            <span v-if="!$vuetify.display.mobile">
+              {{ btn.text }}
+            </span>
+            <span v-else>
+              {{ btn.text_mobile }}
+            </span>
           </v-btn>
         </v-sheet>
       </v-app-bar>
@@ -112,9 +117,9 @@ export default {
   },
   data: () => ({
     app_bar_buttons: [
-      { text: 'Pelit', icon: 'mdi-play-box-outline', route: '/games' },
-      { text: 'Uutiset & Some', icon: 'mdi-newspaper-variant-outline', route: '/news' },
-      { text: 'Data & Tilastot', icon: 'mdi-database-outline', route: '/stats' },
+      { text: 'Pelit', text_mobile: "Pelit", icon: 'mdi-play-box-outline', route: '/games' },
+      { text: 'Uutiset & Some', text_mobile: "Uutiset", icon: 'mdi-newspaper-variant-outline', route: '/news' },
+      { text: 'Data & Tilastot', text_mobile: "Data", icon: 'mdi-database-outline', route: '/stats' },
     ],
     stats_buttons: [
       { text: 'Pelaajakortit', path: '/player-cards', active: false, dropdown: false },

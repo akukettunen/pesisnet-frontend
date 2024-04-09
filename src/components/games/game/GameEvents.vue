@@ -21,6 +21,12 @@
       <div style="position: relative; justify-content: center;" class="d-flex">
         <GameField ref="field" :hits="[{x: 0.5, y: 0.4}]" :width="width" :height="height" />
       </div>
+      <div>
+        <runner-badge></runner-badge>
+      </div>
+      <div>
+        <!-- <hitter-badge></hitter-badge> -->
+      </div>
     </v-col>
   </v-row>
 </template>
@@ -29,10 +35,14 @@
 import { mapGetters } from 'vuex'
 import GameField from '@/components/games/game/GameField.vue'
 import GameEvent from '@/components/games/game/GameEvent.vue'
+import RunnerBadge from './RunnerBadge.vue'
+import HitterBadge from './HitterBadge.vue'
 export default {
   components: {
     GameField,
-    GameEvent
+    GameEvent,
+    RunnerBadge,
+    HitterBadge
   },
   created() {
     this.$nextTick(() => {
@@ -49,7 +59,8 @@ export default {
     ...mapGetters('game', [
       'reversed_events',
       'game_data',
-      'events'
+      'events',
+      'latest_runner_data'
     ]),
     current_inning_events() {
       if(!this.game_data || !this.game_data.liveResult) return []

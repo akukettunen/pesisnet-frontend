@@ -1,5 +1,4 @@
 import a from '@/utils/axios'
-import dayjs from 'dayjs'
 import { nextTick } from 'vue';
 // import router from '@/router/index.js'
 
@@ -20,7 +19,15 @@ const game = {
     ],
     opened_event: null,
     events_to_be_simulated: [],
-    event_polling_interval: null
+    event_polling_interval: null,
+    latest_runner_data: {
+      season: null,
+      base: null,
+      times: null,
+      player_name: null,
+      player_id: null
+    },
+    latest_hitter: null
   }),
   mutations: {
     RESET_GAME_DATA(state) {
@@ -58,6 +65,21 @@ const game = {
     },
     SET_EVENT_POLLING_INTERVAL(state, val) {
       state.event_polling_interval = val
+    },
+    SET_LATEST_RUNNER_DATA(state, val) {
+      state.latest_runner_data = val
+    },
+    RESET_LATEST_RUNNER_DATA(state) {
+      state.latest_runner_data = {
+        season: null,
+        base: null,
+        times: null,
+        player_name: null,
+        player_id: null
+      }
+    },
+    SET_LATEST_HITTER(state, val) {
+      state.latest_hitter = val
     }
   },
   actions: {
@@ -72,14 +94,12 @@ const game = {
         .then(e => {
           if(getters.loading_game_id != id) return
 
-          console.log('got events')
             const simulate = false
           if(simulate) {
             commit('SET_EVENTS_TO_BE_SIMULATED', e.data.events)
             dispatch('startEventSimulation')
           } else if(e.data.events.length > getters.events.length) {
             commit('SET_EVENTS', e.data.events)
-            console.log('set events')
           }
 
           commit('SET_GAME', e.data.game)
@@ -100,6 +120,65 @@ const game = {
 
           commit('SET_LOADING_GAME', false)
         })
+    },
+    eventRefresh({ getters, commit, dispatch }, new_event) {
+      if(!(["Superpesis", "Talvisuper"]).includes(getters.game.series.level) && ( getters.game.series.level != "Ykköspesis" || getters.game.series.name != "Miehet")) {
+        commit('RESET_LATEST_RUNNER_DATA')
+        return
+      }
+
+      const event = new_event.events[0]
+      const team_id = new_event.team
+      const bases = event.runnersAtBases
+      let furthest_runner_id = null
+      let base_index = 0
+
+      bases.forEach((r, i) => {
+        if(i == 0 && r) {
+          console.log('te')
+          dispatch('handleHitter', { player_id: r, team_id })
+        } else if(i == 0) {
+          commit('SET_LATEST_HITTER', null)
+        }
+
+        if(r && i != 0 && i != 4) {
+          furthest_runner_id = r
+          base_index = i
+        }
+      })
+
+      if(!furthest_runner_id) {
+        commit('RESET_LATEST_RUNNER_DATA')
+        return
+      }
+
+      if(getters.latest_runner_data.player_id == furthest_runner_id) {
+        commit('SET_LATEST_RUNNER_DATA', { ...getters.latest_runner_data, current_base: base_index })
+      } else {
+        commit('RESET_LATEST_RUNNER_DATA')
+      }
+
+      const runner = getters.player_by_team_id_and_player_id({ team_id, player_id: furthest_runner_id })
+
+      if(!runner || !runner.name) return
+
+      const d = new Date();
+      let season = d.getFullYear();
+
+      a(`/players/time?base=${base_index}&player_name=${runner.name}&season=${season}`)
+        .then(e => {
+          commit('SET_LATEST_RUNNER_DATA', { ...e.data, player: runner, player_id: furthest_runner_id })
+        })
+        .catch(e => {
+          console.log(e)
+        })
+    },
+    handleHitter({ commit, getters }, { player_id, team_id }) {
+      const hitter = getters.player_by_team_id_and_player_id({ team_id, player_id })
+
+      if(!hitter) return
+
+      commit('SET_LATEST_HITTER', hitter)
     },
     startEventPolling({ commit, dispatch }) {
       const interval = setInterval(() => {
@@ -156,9 +235,15 @@ const game = {
     events_to_be_simulated: state => state.events_to_be_simulated,
     opened_event: state => state.opened_event,
     events: state => state.events,
+    latest_hitter: state => state.latest_hitter,
+    latest_runner_data: state => state.latest_runner_data,
     event_polling_interval: state => state.event_polling_interval,
     reversed_events: (_, getters) => {
       return [...getters.events].reverse()
+    },
+    player_by_team_id_and_player_id: (_, getters) => ({ team_id, player_id }) => {
+      const side = getters.game.home?.id == team_id ? 'home' : 'away'
+      return getters.game[side].players.find(p => p.id == player_id || p.number == player_id)
     },
     happening_type_events: (_, getters) => {
       // Jaksojen alut ja loput

@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <DoughnutChart :chartData="data" />
+  <div style="width: calc(100%);">
+    <DoughnutChart v-if="data" :chartData="data" />
   </div>
 </template>
 

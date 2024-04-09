@@ -1,6 +1,5 @@
 <template>
   <v-sheet @click="openEvent(event); $emit('event-clicked', event)" style="cursor: pointer;" >
-    <!-- {{ event }} -->
     <!-- { 
       "id": 0, 
       "groupType": "is", 

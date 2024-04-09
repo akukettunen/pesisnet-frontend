@@ -1,7 +1,7 @@
 <template>
   <div class="d-flex justify-center mt-5">
     <div style="height: 100%; position: relative;">
-      <v-img style="border-radius: 20px;" width="300" src="https://epesis.fi/logos/kentta.png"></v-img>
+      <v-img style="border-radius: 20px;" :width="real_width" src="https://epesis.fi/logos/kentta.png"></v-img>
       <div
         v-for="e in events"
         :key="e.eventId"
@@ -14,8 +14,8 @@
         }"
         :style="`
           position: absolute;
-          top: ${481.63 * (e.koordinaatit ? e.koordinaatit.y : 0)}px;
-          left: ${300 * (e.koordinaatit ? e.koordinaatit.x : 0)}px;
+          top: ${top * (e.koordinaatit ? e.koordinaatit.y : 0)}px;
+          left: ${real_width * (e.koordinaatit ? e.koordinaatit.x : 0)}px;
           height: 10px;
           width: 10px;
         `"
@@ -54,9 +54,14 @@
 
 <script>
 export default {
-  props: ['events'],
+  props: ['events', 'width'],
   computed: {
-
+    top() {
+      return this.real_width * 1.6054
+    },
+    real_width() {
+      return this.width || 300
+    }
   }
 }
 </script>

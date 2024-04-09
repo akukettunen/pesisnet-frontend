@@ -1,8 +1,12 @@
 <template>
-  <v-card class="pa-3" style="z-index: 0;">
+  <v-card class="pa-3" style="z-index: 0; max-width: 100vw;">
     <v-row v-if="player && !loading_player">
-      <v-col cols="4">
-        <v-avatar :color="player.image && player.image.original ? 'white' : 'primary'" variant="elevated" size="150">
+      <v-col class="justify-center d-flex" cols="12" md="4">
+        <v-avatar 
+          :color="player.image && player.image.original ? 'white' : 'primary'" 
+          variant="elevated" 
+          :size="$vuetify.display.mobile ? 100 : 150"
+        >
           <v-img
             v-if="player.image && player.image.original"
             :src="player.image.original"
@@ -13,16 +17,16 @@
           </span>
         </v-avatar>
       </v-col>
-      <v-col cols="8">
+      <v-col class="justify-center d-flex" cols="12" md="8">
         <v-sheet class="d-flex-column">
-          <span v-if="$vuetify.display.mobile" class="text-h5">
+          <div style="text-align: center;" v-if="$vuetify.display.mobile" class="text-h5">
             {{ playerName }}
-          </span>
-          <span v-else class="text-h3">
+          </div>
+          <div style="text-align: center;" v-else class="text-h3">
             {{ playerName }}
-          </span>
-          <v-sheet class="mt-10 d-flex">
-            <v-btn size="x-small" class="mr-1" color="primary" @click="openPesiksenMaailma()">
+          </div>
+          <v-sheet class="mt-10 d-flex flex-" :class="{ 'flex-column' : $vuetify.display.mobile }">
+            <v-btn size="x-small" color="primary" @click="openPesiksenMaailma()">
               <v-icon class="mr-3">mdi-link</v-icon>
               Pesiksen maailma
               <v-tooltip
@@ -32,7 +36,7 @@
                 Pesiksen maailman pelaajakortti
               </v-tooltip>
             </v-btn>
-            <v-btn size="x-small" class="ml-1" color="primary" @click="openPesisTulokset()">
+            <v-btn size="x-small" :class="{ 'mt-3' : $vuetify.display.mobile, 'ml-3' : !$vuetify.display.mobile }" color="primary" @click="openPesisTulokset()">
               <v-icon class="mr-3">mdi-link</v-icon>
               Pesistulokset
               <v-tooltip
@@ -49,7 +53,8 @@
     <v-sheet style="text-align: center;" v-else>
       <v-progress-circular indeterminate size="40"></v-progress-circular>
     </v-sheet>
-    <player-runs></player-runs>
+    <player-runs type="run" v-if="run_data && run_data.length"></player-runs>
+    <player-runs type="play" v-if="play_data && play_data.length"></player-runs>
     <data-by-tilanne class="mt-5" :events="events" />
     <!-- {{ loadingPlayer }}
     {{ player }} -->
@@ -85,7 +90,9 @@ export default {
       'playerInitials',
       'playerName',
       'parsePlayerIdFromName',
-      'events'
+      'events',
+      'play_data',
+      'run_data'
     ])
   }
 }

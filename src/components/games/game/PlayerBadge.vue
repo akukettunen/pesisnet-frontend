@@ -16,7 +16,7 @@
       />
       <v-icon size="30" v-else>mdi-account-outline</v-icon>
     </v-avatar>
-    <div class="pr-3 pl-5 sport-font" style="font-size: 12px; border-radius: 5px; border: 2px solid lightgrey; background-color: white; text-wrap: nowrap; text-align: center; height: 20px; line-height: 15px; margin-left: -10px;">
+    <div class="pr-3 pl-5 sport-font" :style="`color: ${$vuetify.theme.dark ? 'white' : 'black'}; font-size: 12px; border-radius: 5px; border: 2px solid lightgrey; background-color: white; white-space: nowrap; text-align: center; height: 20px; line-height: 15px; margin-left: -10px;`">
       {{ player.first_name[0] }}. {{ player.last_name }}
     </div>
     <!-- {{ player }} -->

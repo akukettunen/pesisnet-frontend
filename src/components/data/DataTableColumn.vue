@@ -16,7 +16,7 @@
       class="dt-col-cell dt-col-cell" 
       :style="cellStyle"
       :key="cell[col]"
-      style="text-wrap: nowrap;"
+      style="white-space: nowrap;"
     >
       {{ cell[col.key] }}
     </v-sheet>
@@ -44,7 +44,7 @@ export default {
     flex-direction: column;
     
     &-cell {
-      text-wrap: nowrap;
+      white-space: nowrap;
       max-width: 200px;
       // border: 1px solid rgba(255, 255, 255, 0.333);
       cursor: pointer;

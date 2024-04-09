@@ -45,7 +45,7 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 import { gsap } from 'gsap';
 import PlayerBadge from './PlayerBadge.vue';
 
@@ -68,9 +68,13 @@ export default {
   }),
   methods: {
     handleEvent(event) {
+      this.eventRefresh(event)
+
       const eventIndex = [...this.reversed_events].findIndex(e => e.id === event.id)
       const previousEvent = [...this.reversed_events][eventIndex + 1]
       this.hitting_team_id = event.team
+
+      if(!previousEvent) return
 
       const inningChanged =
         previousEvent.period != event.period
@@ -205,7 +209,10 @@ export default {
     hideBall() {
       gsap.to("#ball", { duration: 0.2, height: 0, width: 0, x: 12.5, y: 12.5 });
       gsap.to("#ball", { duration: 0, height: 0, width: 0, x: 0, y: 0, delay: 0.2 });
-    }
+    },
+    ...mapActions('game', [
+      'eventRefresh'
+    ])
   },
   computed: {
     ...mapGetters('game', [

@@ -28,7 +28,7 @@
     <div class="text-h5 mt-5">
       Lyöntikartta
     </div>
-    <hit-map :events="tilanne_events"></hit-map>
+    <hit-map :width="$vuetify.display.mobile ? 200 : 300" :events="tilanne_events"></hit-map>
     <div class="text-h5">
       Lyönnin tyypit
     </div>
