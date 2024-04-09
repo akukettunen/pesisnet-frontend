@@ -1,6 +1,6 @@
 <template>
   <v-container style="padding-top: 150px">
-    <v-row max-width="800" class="mx-auto">
+    <v-row max-width="500" class="mx-auto">
       <v-col cols="12" md="4">
         <v-select
           density="compact"
@@ -42,6 +42,9 @@
       </p>
       <p>
         Taulukossa on kutakin lukkaria vastaan mitattujen pesänvälien keskiarvo. 
+      </p>
+      <p>
+        Miesten Ykköspesiksestä data saatavilla kaudesta 2024 eteenpäin. 
       </p>
     </v-card-text>
   </v-container>
