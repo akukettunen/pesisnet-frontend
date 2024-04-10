@@ -22,7 +22,7 @@ registerPlugins(app)
 app.use(VueMixpanel, {
   token: '197aec2dc9e2a86065831204f7f29d7f',
   config: {
-    debug: true
+    debug: false
   }
 })
 

@@ -29,7 +29,6 @@
             'light' : $vuetify.theme.name !== 'dark' 
           }">
           <b-select
-            :options="mapped_players"
             placeholder="Hae pelaajaa nimellä..."
             @search="inputChanged($event)"
             @option:selected="player_name = chosen_player.label"
@@ -134,8 +133,11 @@ export default {
         return left >= right
       }).map(p => {
         let [f, l] = p.name.split(' ')
-        f = f.charAt(0).toUpperCase() + f.slice(1).toLowerCase();
         l = l.charAt(0).toUpperCase() + l.slice(1).toLowerCase();
+        f = f.split('-').map(part => { 
+          // console.log(part.charAt(0).toUpperCase() + part.slice(1).toLowerCase() )
+          return part.charAt(0).toUpperCase() + part.slice(1).toLowerCase() 
+        }).join('-')
 
         return {
           label: `${f} ${l} (${p.id})`,
@@ -145,25 +147,6 @@ export default {
     }
   },
   computed: {
-    mapped_players() {
-      if(!this.player_name_typed) return []
-
-      return this.players.filter(p => {
-        let left = this.player_name_typed.split(' ').filter(spot => p.name.includes(spot)).length
-        let right = this.player_name_typed.split(' ').length
-
-        return left >= right
-      }).map(p => {
-        let [f, l] = p.name.split(' ')
-        f = f.charAt(0).toUpperCase() + f.slice(1).toLowerCase();
-        l = l.charAt(0).toUpperCase() + l.slice(1).toLowerCase();
-
-        return {
-          label: `${f} ${l} (${p.id})`,
-          code: p.id
-        }
-      })
-    },
     season: {
       get() {
         return this.player_card_season
@@ -195,7 +178,9 @@ export default {
 </script>
 
 <style scoped>
-.dark >>> {
+@import "vue-select/dist/vue-select.css";
+
+.dark :deep() {
   --vs-controls-color: #d1d1d1;
   --vs-border-color: #a6a6a6;
 
@@ -212,9 +197,9 @@ export default {
   --vs-dropdown-option--active-color: #eeeeee;
 }
 
-.light >>> {
+.light :deep() {
   --vs-controls-color: #090225;
-  --vs-border-color: #664cc3;
+  --vs-border-color: #1f1f1f;
 
   --vs-dropdown-bg: #ffffff;
   --vs-dropdown-color: #1f1f1f;
@@ -228,6 +213,4 @@ export default {
   --vs-dropdown-option--active-bg: #cdcdcd;
   --vs-dropdown-option--active-color: #222222;
 }
-
-@import "vue-select/dist/vue-select.css";
 </style>
