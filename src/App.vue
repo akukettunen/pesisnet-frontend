@@ -118,14 +118,14 @@ import { onMounted } from 'vue';
 const theme = useTheme()
 
 function toggleTheme () {
-  const val = theme.global.current.value.dark ? 'light' : 'dark'
+  const val = theme.global.current._value.dark ? 'light' : 'dark'
   theme.global.name.value = val
   localStorage.setItem('pesisnet-theme', val);
 }
 
 onMounted(() => {
   const savedTheme = localStorage.getItem('pesisnet-theme');
-  theme.global.name.value = savedTheme;
+  theme.global.name.value = savedTheme || 'dark';
 });
 </script>
 
