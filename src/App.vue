@@ -2,7 +2,7 @@
   <v-sheet fluid>
     <v-layout>
       <v-app-bar color="primary-darken-1" name="app-bar" :elevation="$route.meta.show_news_bar ? '0' : '2'">
-        <v-app-bar-title class="d-flex" v-if="!$vuetify.display.mobile" style="flex-shrink: 1; flex-direction: row;">
+        <v-app-bar-title class="d-flex" v-if="!$vuetify.display.mobile" style="flex-shrink: 1; flex-direction: column;">
             <v-img
               @click="$router.push('/')"
               height="50"
@@ -16,12 +16,8 @@
                 location="end"
               >Peleihin</v-tooltip>
             </v-img>
-            <!-- <div>
-              <v-app-bar-title style="flex-shrink: 1;" class="sport-font">
-                PesisNet
-              </v-app-bar-title>
-            </div> -->
         </v-app-bar-title>
+
         <v-sheet color="primary-darken-1" height="90%" class="mx-auto">
           <v-btn
             @click="$router.push(btn.route)"
@@ -42,6 +38,17 @@
             <span v-else>
               {{ btn.text_mobile }}
             </span>
+          </v-btn>
+          <v-btn @click="toggleTheme()" class="mx-2" icon>
+            <v-tooltip activator="parent">
+              {{ $vuetify.theme.name == 'dark' ? 'Vaalea tila' : 'Tumma tila' }}
+            </v-tooltip>
+            <v-icon v-if="$vuetify.theme.name == 'dark'">
+              mdi-weather-sunny
+            </v-icon>
+            <v-icon v-else>
+              mdi-weather-night
+            </v-icon>
           </v-btn>
         </v-sheet>
       </v-app-bar>
@@ -104,13 +111,39 @@
   </v-sheet>
 </template>
 
+<script setup>
+import { useTheme } from 'vuetify'
+import { onMounted } from 'vue';
+
+const theme = useTheme()
+
+function toggleTheme () {
+  const val = theme.global.current.value.dark ? 'light' : 'dark'
+  theme.global.name.value = val
+  localStorage.setItem('pesisnet-theme', val);
+}
+
+onMounted(() => {
+  const savedTheme = localStorage.getItem('pesisnet-theme');
+  theme.global.name.value = savedTheme;
+});
+</script>
+
 <script>
 import { mapActions, mapGetters, mapMutations } from 'vuex'
+
 export default {
   name: "App",
-  metaInfo: {
-    defaultTitle: 'PesisNet ⚾',
-    titleTemplate: '%s | PesisNet ⚾'
+  inject: ['mixpanel'],
+  mounted() {
+    this.$router.beforeEach((to, from, next) => {
+      this.mixpanel.track('Page View', {
+        path: to.path,
+        fullPath: to.fullPath,
+        query: to.query
+      });
+      next();
+    });
   },
   created() {
     this.initMaps()
@@ -165,4 +198,6 @@ export default {
 .sport-font {
   font-family: graduate;
 }
+
+
 </style>

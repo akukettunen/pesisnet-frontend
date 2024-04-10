@@ -1,11 +1,11 @@
 <template>
-  <v-sheet class="dt" style="max-width: calc(100%); min-width: 0;">
+  <v-sheet class="dt" style="max-width: calc(100%); min-width: 0; border-radius: 10px;">
     <div class="text-h5 mb-4 text-center">
       {{ data.title }}
     </div>
     <v-skeleton-loader
       type="list-item-three-line	, list-item-three-line	, list-item-three-line	"
-      :style="`width: 100%; max-width: calc(100vw - 80px); justify-content: center; display: flex;`"
+      :style="`width: 100%; max-width: calc(100vw - 40px); justify-content: center; display: flex;`"
       :loading="loading"
     >
       <div class="dt-table">

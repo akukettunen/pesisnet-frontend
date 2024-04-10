@@ -36,7 +36,7 @@
         :density="$vuetify.display.mobile ? 'compact' : 'sparse'"
       ></data-table>
     </v-sheet>
-    <v-card-text>
+    <v-card-text class="mt-4">
       <p class="mb-2">
         Lukkarivertailussa on mukana lukkarit, joilta on mitattu kaudella yli 20 etenemisaikaa pesänvälillä. 
       </p>

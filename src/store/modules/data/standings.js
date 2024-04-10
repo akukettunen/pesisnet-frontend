@@ -38,7 +38,6 @@ const standings = {
       commit('SET_LOADING_BOARD', true)
       a(`/data/scores?seasonId=${season_id}&seasonSeriesId=${series_id}&seasonSeriesPhaseId=${phase_id}`)
         .then(e => {
-          console.log(e.data)
           commit('SET_DATA', e.data)
           commit('SET_MATCHES', e.data.matchSeries)
         })
@@ -46,6 +45,18 @@ const standings = {
           commit('SET_LOADING_BOARD', false)
         })
     },
+    getRuns({ commit }, { season_id, series_id, phase_id}) {
+      commit('SET_LOADING_BOARD', true)
+
+      a(`/data/runs?seasonId=${season_id}&seasonSeriesId=${series_id}&seasonSeriesPhaseId=${phase_id}`)
+        .then(e => {
+          commit('SET_DATA', e.data)
+          commit('SET_MATCHES', e.data.matchSeries)
+        })
+        .finally(() => {
+          commit('SET_LOADING_BOARD', false)
+        })
+    }
   },
   getters: {
     boards: state => state.boards,

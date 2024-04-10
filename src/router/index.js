@@ -56,6 +56,14 @@ const routes = [
         }
       },
       {
+        path: 'runs',
+        name: 'Runs',
+        component: () => import('@/views/data/Runs.vue'),
+        meta: {
+          show_data_bar: true,
+        }
+      },
+      {
         path: 'player-cards',
         name: 'PlayerCards',
         component: () => import('@/views/Data.vue'),

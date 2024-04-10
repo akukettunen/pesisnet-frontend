@@ -31,7 +31,9 @@ export default {
       return this.header
     },
     cellStyle() {
-      return `padding: ${this.density == 'sparse' ? 5 : 1}px ${this.density == 'sparse' ? 15 : 4}px;`
+      const isSparse = this.density == 'sparse' && !this.$vuetify.display.mobile
+
+      return `padding: ${isSparse ? 5 : 1}px ${isSparse ? 15 : 4}px;`
     }
   }
 }

@@ -22,17 +22,12 @@
               {{ pl.text }}
           </v-btn>
         </v-sheet>
-        <v-sheet class="my-5">
-          <!-- <vue-select
-            v-model="player_name"
-            v-if="!loading_players"
-            :options="players"
-            placeholder="Hae pelaajaa (Sukunimi Etunimi)"
-          ></vue-select> -->
-          <!-- <v-card v-else>
-            <v-progress-linear color="primary" indeterminate />
-            <v-card-text>Ladataan pelaajia...</v-card-text>
-          </v-card> -->
+        <v-sheet 
+          class="my-5" 
+          :class="{ 
+            'dark': $vuetify.theme.name === 'dark', 
+            'light' : $vuetify.theme.name !== 'dark' 
+          }">
           <b-select
             :options="mapped_players"
             placeholder="Hae pelaajaa nimellä..."
@@ -199,6 +194,40 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
+.dark >>> {
+  --vs-controls-color: #d1d1d1;
+  --vs-border-color: #a6a6a6;
+
+  --vs-dropdown-bg: #020A0F;
+  --vs-dropdown-color: #c7c7c7;
+  --vs-dropdown-option-color: #c5c5c5;
+
+  --vs-selected-bg: #d4d4d4;
+  --vs-selected-color: #eeeeee;
+
+  --vs-search-input-color: #eeeeee;
+
+  --vs-dropdown-option--active-bg: #4c6ac3;
+  --vs-dropdown-option--active-color: #eeeeee;
+}
+
+.light >>> {
+  --vs-controls-color: #090225;
+  --vs-border-color: #664cc3;
+
+  --vs-dropdown-bg: #ffffff;
+  --vs-dropdown-color: #1f1f1f;
+  --vs-dropdown-option-color: #121212;
+
+  --vs-selected-bg: #dadada;
+  --vs-selected-color: #161616;
+
+  --vs-search-input-color: #363636;
+
+  --vs-dropdown-option--active-bg: #cdcdcd;
+  --vs-dropdown-option--active-color: #222222;
+}
+
 @import "vue-select/dist/vue-select.css";
 </style>
