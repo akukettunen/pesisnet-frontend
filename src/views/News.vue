@@ -1,21 +1,41 @@
 <template>
-  <v-container :key="current_url" fluid style="height: 99vh; padding: 0px; padding-top: 124px;">
-    <v-sheet :key="current_url" style="height: 100%; width: 100%; max-width: 1000px; margin: 0 auto;" class="px-10">
-      <iframe :style="`visibility: ${visibility};`" :onload="onload()" id="frame-2" width="100%" height="100%" :src="current_url" frameborder="0"></iframe>
-    </v-sheet>
+  <v-container :key="current_url" style="height: 99vh; padding-top: 164px;">
+    <v-row>
+      <v-col
+        cols="12"
+        md="4"          
+        v-for="(item, i) in feed"
+        :key="'article' + i"
+      >
+        <Article :item="item"></Article>
+      </v-col>
+    </v-row>
   </v-container>
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
+import Article from '@/components/news/Article.vue'
+
 export default {
   data: () => ({
     visibility: 'hidden'
   }),
+  components: {
+    Article
+  },
+  async created() {
+    this.getFeed()
+  },
   methods: {
     onload() {
-      console.log('visible')
       this.visibility = 'visible'
+    },
+    ...mapActions('rss', [
+      'fetchRSSFeed'
+    ]),
+    async getFeed() {
+      await this.fetchRSSFeed(this.current_url)
     }
   },
   computed: {
@@ -23,13 +43,15 @@ export default {
       'chosen_button_or_first',
       'chosen_button',
       'current_url'
+    ]),
+    ...mapGetters('rss', [
+      'feed'
     ])
   },
   watch: {
     'current_url': {
       handler() {
-        console.log('handler hidden')
-        this.visibility = 'hidden'
+        this.getFeed()
       }
     }
   }
