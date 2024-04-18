@@ -1,5 +1,5 @@
 <template>
-  <v-container :key="current_url" style="height: 99vh; padding-top: 164px;">
+  <v-container style="height: 99vh; padding-top: 164px;">
     <v-row>
       <v-col
         cols="12"
@@ -7,7 +7,7 @@
         v-for="(item, i) in feed"
         :key="'article' + i"
       >
-        <Article :item="item"></Article>
+        <Article :item="item" :twitter="chosen_button_or_first.twitter"></Article>
       </v-col>
     </v-row>
   </v-container>
