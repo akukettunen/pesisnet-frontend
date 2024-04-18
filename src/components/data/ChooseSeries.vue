@@ -3,20 +3,9 @@
     <v-col cols="12" md="4">
       <v-select
         hide-details
-        :density="$vuetify.display.mobile ? 'compact' : 'default'"
+        density="compact"
         class="mx-3"
-        :loading="loading_maps"
-        label="Kausi"
-        :items="seasons_choosable"
-        @update:modelValue="handleSeasonChange($event)"
-        :model-value="season_id"
-      />
-    </v-col>
-    <v-col cols="12" md="4">
-      <v-select
-        hide-details
-        :density="$vuetify.display.mobile ? 'compact' : 'default'"
-        class="mx-3"
+        variant="outlined"
         :loading="loading_maps"
         label="Sarja"
         :items="season_serieses()"
@@ -27,8 +16,22 @@
     <v-col cols="12" md="4">
       <v-select
         hide-details
-        :density="$vuetify.display.mobile ? 'compact' : 'default'"
+        density="compact"
         class="mx-3"
+        variant="outlined"
+        :loading="loading_maps"
+        label="Kausi"
+        :items="seasons_choosable"
+        @update:modelValue="handleSeasonChange($event)"
+        :model-value="season_id"
+      />
+    </v-col>
+    <v-col cols="12" md="4">
+      <v-select
+        hide-details
+        density="compact"
+        class="mx-3"
+        variant="outlined"
         :loading="loading_maps"
         label="Vaihe"
         :items="season_series_phases()"

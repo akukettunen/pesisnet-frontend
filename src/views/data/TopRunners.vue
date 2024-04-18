@@ -5,21 +5,17 @@
       v-model:league_id="league_id"
       v-model:season="season"
       @input="handleChange()"
-      :disabled_bases="[ 3 ]"
     ></choose-season>
     <v-sheet max-width="800" class="mx-auto">
       <data-table
-        :loading="loading_pitcher_data"
-        :data="formPitcherData"
+        :loading="loading_runner_data"
+        :data="formRunnerData"
         :density="$vuetify.display.mobile ? 'compact' : 'sparse'"
       ></data-table>
     </v-sheet>
     <v-card-text class="mt-4">
       <p class="mb-2">
-        Lukkarivertailussa on mukana lukkarit, joilta on mitattu kaudella yli 20 etenemisaikaa pesänvälillä. 
-      </p>
-      <p>
-        Taulukossa on kutakin lukkaria vastaan mitattujen pesänvälien keskiarvo. 
+        Eteneminen on aika siitä kun pallo irtoaa lukkarin kädestä siihen kun etenijä on pesässä. Vain lentomerkillä edetyt täydeksi etenemiseksi tulkitut etenemiset mitataan.
       </p>
       <p>
         Miesten Ykköspesiksestä data saatavilla kaudesta 2024 eteenpäin. 
@@ -29,28 +25,33 @@
 </template>
 
 <script>
-import { mapActions, mapGetters } from 'vuex'
-import DataTable from '@/components/data/DataTable.vue'
 import ChooseSeason from '@/components/data/ChooseSeason.vue'
+import DataTable from '@/components/data/DataTable.vue'
+import { mapActions, mapGetters } from 'vuex'
 
 export default {
-  components: { DataTable, ChooseSeason },
+  components: { ChooseSeason, DataTable },
+  data: () => ({
+    season: 2024,
+    base: 1,
+    league_id: 1
+  }),
   created() {
     this.handleChange()
   },
-  data: () => ({
-    base: 1,
-    season: 2024,
-    league_id: 1
-  }),
   computed: {
-    formPitcherData() {
-      if(!this.pitcher_data) return {}
-      const d = this.pitcher_data.filter(p => p.base == this.base)
+    ...mapGetters('data', [
+      'runner_data',
+      'loading_runner_data'
+    ]),
+    formRunnerData() {
+      if(!this.runner_data) return {}
+      const d = this.runner_data.filter(p => p.base == this.base)
 
       let headers = [
         { key: "pos", text: "#", long_text: "Sijoitus" },
         { key: "player_name", text: "Nimi", long_text: "Pelaaja", left: true, lock: true },
+        { key: "min_time", text: "Paras", long_text: "Paras eteneminen", left: false },
         { key: "avg", text: "Keskiarvo", long_text: "Aikojen keskiarvo", left: false },
         { key: "amount", text: "Määrä", long_text: "Mitattujen aikojen määrä", left: false },
       ]
@@ -58,7 +59,8 @@ export default {
       let data = d.map((r, i) => {
         return {
           pos: i + 1,
-          player_name: r.lukkari,
+          player_name: r.runner,
+          min_time: r.min_time + ' s',
           avg: r.average_time + ' s',
           amount: r.amount
         }
@@ -67,23 +69,18 @@ export default {
       // const player = d.maps.players.find(p => p.id == player_id)
 
       return {
-        data, headers,
+        data, headers, title: "TOP 20 Etenijät"
       }
     },
-    ...mapGetters('data', [
-      'pitcher_data',
-      'loading_pitcher_data'
-    ])
   },
   methods: {
     ...mapActions('data', [
-      'getPitcherData'
+      'getRunnerData'
     ]),
     handleChange() {
-      this.getPitcherData({
+      this.getRunnerData({
         league_id: this.league_id,
-        season: this.season,
-        base: this.base
+        season: this.season
       })
     }
   }

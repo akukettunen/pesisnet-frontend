@@ -57,8 +57,24 @@ const routes = [
       },
       {
         path: 'runs',
-        name: 'Runs',
+        name: 'Ruuns',
         component: () => import('@/views/data/Runs.vue'),
+        meta: {
+          show_data_bar: true,
+        }
+      },
+      {
+        path: 'hps-by-base',
+        name: 'Hps',
+        component: () => import('@/views/data/HpsByBase.vue'),
+        meta: {
+          show_data_bar: true,
+        }
+      },
+      {
+        path: 'karkilyonnit',
+        name: 'Runs',
+        component: () => import('@/views/data/Karkilyonnit.vue'),
         meta: {
           show_data_bar: true,
         }
@@ -75,6 +91,14 @@ const routes = [
         path: 'pitchers',
         name: 'Pitchers',
         component: () => import('@/views/data/Pitchers.vue'),
+        meta: {
+          show_data_bar: true,
+        }
+      },
+      {
+        path: 'top-runners',
+        name: 'TopRunners',
+        component: () => import('@/views/data/TopRunners.vue'),
         meta: {
           show_data_bar: true,
         }

@@ -56,6 +56,18 @@ const standings = {
         .finally(() => {
           commit('SET_LOADING_BOARD', false)
         })
+    },
+    getKarkilyonnit({ commit }, { season_id, series_id, phase_id}) {
+      commit('SET_LOADING_BOARD', true)
+
+      a(`/data/karkilyonnit?seasonId=${season_id}&seasonSeriesId=${series_id}&seasonSeriesPhaseId=${phase_id}`)
+        .then(e => {
+          commit('SET_DATA', e.data)
+          commit('SET_MATCHES', e.data.matchSeries)
+        })
+        .finally(() => {
+          commit('SET_LOADING_BOARD', false)
+        })
     }
   },
   getters: {

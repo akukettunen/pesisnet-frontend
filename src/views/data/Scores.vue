@@ -1,47 +1,21 @@
 <template>
-  <v-container style="padding-top: 150px;">
-    <ChooseSeries @update="handleUpdate()" />
-  </v-container>
-  <div style="justify-content: center; display: flex;" class="mb-15 mt-10">
-    <data-table
-      :data="formTableData"
-      density="sparse"
-      :loading="loading_boards"
-    ></data-table>
-    <!-- {{ data ? data.maps : '' }} -->
-  </div>
+  <PesisData 
+    specifier="lyodyt"
+    :formDataFunction="formTableData"
+  ></PesisData>
 </template>
 
 <script>
-import { mapActions, mapGetters } from 'vuex'
-import ChooseSeries from '@/components/data/ChooseSeries.vue'
-import DataTable from '@/components/data/DataTable.vue'
+import PesisData from '@/components/data/PesisData.vue'
+import { mapGetters } from 'vuex'
 
 export default {
   components: {
-    ChooseSeries,
-    DataTable
-  },
-  created() {
-    if(this.maps) this.handleUpdate()
-    else {
-      var self = this
-      setTimeout(() => {
-        self.handleUpdate()
-      }, 1000)
-    }
+    PesisData
   },
   computed: {
-    ...mapGetters('data', [
-      'season_id',
-      'season_series_id',
-      'phase_id',
-      'maps'
-      // 'loading_maps'      
-    ]),
-    ...mapGetters('standings', [
-      'data',
-      'loading_boards'
+    ...mapGetters('pt_data', [
+      'data'
     ]),
     formTableData() {
       if(!this.data) return {}
@@ -77,18 +51,6 @@ export default {
         data, headers,
          title: "Lyödyt"
       }
-    }
-  },
-  methods: {
-    ...mapActions('standings', [
-      'getScores'
-    ]),
-    handleUpdate() {
-      this.getScores({
-        season_id: this.season_id, 
-        series_id: this.season_series_id, 
-        phase_id: this.phase_id
-      })
     }
   }
 }

@@ -12,21 +12,25 @@
         <div class="dt-table-locked" >
           <data-table-column
             @cell-clicked="$emit('cell-clicked', $event)"
+            @sort="handleSort($event)"
             v-for="(header, i) in locked_headers" 
-            :data="data.data" 
+            :data="sortedData.data" 
             :header="header"
             :key="i + 'header'"
             :density="density"
+            :sort="sort"
           />
         </div>
         <div class="dt-table-scroll">
-            <data-table-column
-            @cell-clicked="$emit('cell-clicked', $event)" 
+          <data-table-column
+            @cell-clicked="$emit('cell-clicked', $event)"
+            @sort="handleSort($event)" 
             v-for="(header, i) in unlocked_headers" 
-            :data="data.data" 
+            :data="sortedData.data" 
             :header="header"
             :key="i + 'header'"
             :density="density"
+            :sort="sort"
           />
         </div>
       </div>
@@ -62,10 +66,62 @@ import DataTableColumn from './DataTableColumn.vue'
 export default {
   components: { DataTableColumn },
   props: ['data', 'density', 'loading'],
-  /*
-    headers
-  */
+  data: () => ({
+    sort: {
+      key: null,
+      desc: true
+    }
+  }),
+  methods: {
+    handleSort(key) {
+      if(!this.sort.key || key !== this.sort.key) {
+        this.sort = {
+          key,
+          desc: true
+        }
+      } else if(this.sort.key == key && this.sort.desc) {
+        // change to same key ascending
+        this.sort = {
+          key,
+          desc: false
+        }
+      } else if(this.sort.key == key && !this.sort.desc) {
+        // remove all sorting
+        this.sort = {
+          key: null,
+          desc: true
+        }
+      } else {
+        // key changed fully
+        this.sort = {
+          key,
+          desc: true
+        }
+      }
+    }
+  },
   computed: {
+    sortedData() {
+      if(!this.sort.key) return this.data
+
+      // return the data sorted by sort key descending
+      let sort_data = [...this.data.data]
+
+      sort_data = sort_data.sort((a, b) => {
+        // only numbers!
+        let c, d;
+        try {
+          c = parseFloat(a[this.sort.key])
+          d = parseFloat(b[this.sort.key])
+        } catch {
+          return 1
+        }
+
+        return (- c + d) * (this.sort.desc ? 1 : -1)
+      })
+
+      return { ...this.data, data: sort_data }
+    },
     locked_headers() {
       let locked = []
       let got_locked = false

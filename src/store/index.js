@@ -5,6 +5,7 @@ import game from './modules/game.js'
 import players from './modules/players.js'
 import data from './modules/data.js'
 import news from './modules/news.js'
+import pt_data from './modules/data/pt_data.js'
 
 import standings from './modules/data/standings.js'
 
@@ -15,7 +16,8 @@ export default createStore({
     players,
     data,
     standings,
-    news
+    news,
+    pt_data
   }
 })
 

@@ -1,46 +1,21 @@
 <template>
-  <v-container style="padding-top: 150px;">
-    <ChooseSeries @update="handleUpdate()" />
-    <div style="justify-content: center; display: flex;" class="mb-15 mt-10">
-      <data-table
-      :data="formTableData"
-      density="sparse"
-      :loading="loading_boards"
-      ></data-table>
-      <!-- {{ data }} -->
-      <!-- {{ data ? data.maps : '' }} -->
-    </div>
-  </v-container>
+  <PesisData 
+    specifier="tuodut"
+    :formDataFunction="formTableData"
+  ></PesisData>
 </template>
 
 <script>
-import { mapActions, mapGetters } from 'vuex'
-import ChooseSeries from '@/components/data/ChooseSeries.vue'
-import DataTable from '@/components/data/DataTable.vue'
+import { mapGetters } from 'vuex'
+import PesisData from '@/components/data/PesisData.vue'
 
 export default {
+  name: 'Runs',
   components: {
-    ChooseSeries,
-    DataTable
-  },
-  created() {
-    if(this.maps) this.handleUpdate()
-    else {
-      var self = this
-      setTimeout(() => {
-        self.handleUpdate()
-      }, 1000)
-    }
+    PesisData
   },
   computed: {
-    ...mapGetters('data', [
-      'season_id',
-      'season_series_id',
-      'phase_id',
-      'maps'
-      // 'loading_maps'      
-    ]),
-    ...mapGetters('standings', [
+    ...mapGetters('pt_data', [
       'data',
       'loading_boards'
     ]),
@@ -76,18 +51,6 @@ export default {
         data, headers,
          title: "Tuodut"
       }
-    }
-  },
-  methods: {
-    ...mapActions('standings', [
-      'getRuns'
-    ]),
-    handleUpdate() {
-      this.getRuns({
-        season_id: this.season_id, 
-        series_id: this.season_series_id, 
-        phase_id: this.phase_id
-      })
     }
   }
 }
