@@ -7,7 +7,11 @@
         v-for="(item, i) in feed"
         :key="'article' + i"
       >
-        <Article :item="item" :twitter="chosen_button_or_first.twitter"></Article>
+        <Article 
+          :item="item" 
+          :twitter="chosen_button_or_first.twitter"
+          :youtube="chosen_button_or_first.youtube"
+        ></Article>
       </v-col>
     </v-row>
   </v-container>

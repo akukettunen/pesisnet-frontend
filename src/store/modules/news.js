@@ -14,7 +14,7 @@ const games = {
       { text: 'Superpesis.fi', feedUrl: 'https://rss.app/feeds/5Ok6rt2WUIihsKHk.xml' },
       { text: 'Supervuoro', feedUrl: 'https://rss.app/feeds/v6cXCAKIEK415n40.xml' },
       { text: 'Twitter', feedUrl: 'https://rss.app/feeds/gNCz0sOCgNPCbGux.xml', icon: 'mdi-twitter', icon_color: 'blue', twitter: true },
-      { text: 'YouTube', feedUrl: 'google.fi', icon: 'mdi-youtube', icon_color: 'red', dropdown: true },
+      { text: 'YouTube', feedUrl: 'https://rss.app/feeds/dCztqXD77TUXdYCd.xml', icon: 'mdi-youtube', icon_color: 'red', dropdown: true, youtube: true },
       { text: 'Joukkueet', feedUrl: 'https://rss.app/embed/v1/wall/9vJjmyNTtovXSq8J', dropdown: true },
     ],
     chosen_button: null

@@ -1,6 +1,6 @@
 <template>
   <v-sheet class="my-2" style="border-radius: 30px;">
-    <div v-if="!twitter">
+    <div v-if="!twitter && !youtube">
       <div @click="openLink()" style="cursor: pointer; min-height: 100px;">
         <v-img
           v-if="item['media:content'] && item['media:content'].$.medium == 'image'"
@@ -34,13 +34,16 @@
         </div>
       </div>
     </div>
-    <v-sheet v-else v-html="item.description" frameborder="0"></v-sheet>
+    <v-sheet v-else @click="openLink()" style="font-size: 20px; cursor: pointer;">
+      {{  item.title }}
+      <v-sheet v-html="item.description" frameborder="0"></v-sheet>
+    </v-sheet>
   </v-sheet>
 </template>
 
 <script>
 export default {
-  props: ['item', 'twitter'],
+  props: ['item', 'twitter', 'youtube'],
   created() {
     if (window.twttr && window.twttr.widgets) {
       // This processes all elements with class 'twitter-tweet' to render the embedded tweet
