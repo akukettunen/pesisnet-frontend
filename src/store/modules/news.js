@@ -6,16 +6,10 @@ const games = {
   state: () => ({
     news_buttons: [
       { text: 'Pesäpallo', feedUrl: 'https://rss.app/feeds/tW9pCSuLUwRZmZEn.xml', tooltip: 'Miesten superpesis' },
-      { text: 'MSU', feedUrl: 'https://rss.app/embed/v1/wall/_lmbRwK8NSVM6TROs', tooltip: 'Miesten superpesis' },
-      { text: 'NSU', feedUrl: 'google.fi', active: true, tooltip: 'Naisten superpesis' },
-      { text: 'MYP', feedUrl: 'google.fi', tooltip: 'Miesten ykköspesis' },
-      { text: 'NYP', feedUrl: 'google.fi', tooltip: 'Naisten ykköspesis' },
-      { text: 'Yleiset', feedUrl: 'google.fi' },
       { text: 'Superpesis.fi', feedUrl: 'https://rss.app/feeds/5Ok6rt2WUIihsKHk.xml' },
       { text: 'Supervuoro', feedUrl: 'https://rss.app/feeds/v6cXCAKIEK415n40.xml' },
       { text: '#pesis', feedUrl: 'https://rss.app/feeds/gNCz0sOCgNPCbGux.xml', icon: 'mdi-twitter', icon_color: 'blue', twitter: true },
       { text: 'YouTube', feedUrl: 'https://rss.app/feeds/GkDFQhsm8PyYN26e.xml', icon: 'mdi-youtube', icon_color: 'red', dropdown: true, youtube: true },
-      { text: 'Joukkueet', feedUrl: 'https://rss.app/embed/v1/wall/9vJjmyNTtovXSq8J', dropdown: true },
     ],
     chosen_button: null
   }),
