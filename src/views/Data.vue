@@ -92,6 +92,11 @@ export default {
   components: { PlayerCard },
   created() {
     // if(!this.players.length) this.initAllPlayers()
+    if(this.$route.query.player_id) {
+      this.player_name = `Pelaaja (${this.$route.query.player_id})`
+      this.player_name_typed = `Pelaaja (${this.$route.query.player_id})`
+      this.getPlayerData(this.$route.query.player_id)
+    }
   },
   data: () => ({
     player_name: null,

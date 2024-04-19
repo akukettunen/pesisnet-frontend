@@ -1,4 +1,5 @@
 import a from '@/utils/axios'
+import router from '@/router/index.js'
 
 const games = {
   namespaced: true,
@@ -93,6 +94,7 @@ const games = {
           .then(e => {
             if(e.data.player.id !== getters.latest_loading_player_id) return
             commit('SET_PLAYER', e.data.player)
+            router.replace({ query: { player_id: e.data.player.id } })
             commit('SET_EVENTS', e.data.events_grouped_by_tilanne)
             commit('SET_RUN_DATA', e.data.averages)
             commit('SET_PLAY_DATA', e.data.average_plays)

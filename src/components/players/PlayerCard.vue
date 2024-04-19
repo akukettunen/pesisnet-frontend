@@ -70,7 +70,7 @@ export default {
   components: { DataByTilanne, PlayerRuns },
   props: ['player_id'],
   created() {
-    this.getPlayerData(this.player_id)
+    if(this.player_id) this.getPlayerData(this.player_id)
   },
   methods: {
     ...mapActions('players', [
