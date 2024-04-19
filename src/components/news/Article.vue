@@ -46,12 +46,15 @@
 
 <script>
 export default {
-  props: ['item', 'twitter', 'youtube'],
+  props: ['item', 'twitter', 'youtube', 'index'],
   created() {
-    if (window.twttr && window.twttr.widgets) {
-      // This processes all elements with class 'twitter-tweet' to render the embedded tweet
-      window.twttr.widgets.load();
-    }
+    this.$nextTick(() => {
+      if (window.twttr && window.twttr.widgets) {
+        console.log(this.index, 'moro')
+        // This processes all elements with class 'twitter-tweet' to render the embedded tweet
+        window.twttr.widgets.load();
+      }
+    })
   },
   methods: {
     openLink() {
@@ -77,7 +80,7 @@ export default {
     blockquote() {
       let mod = this.item.description
 
-      return mod.replace(/<blockquote([^>]*)>/, '<blockquote$1 data-theme="dark">');
+      return this.$vuetify.theme.name == 'dark' ? mod.replace(/<blockquote([^>]*)>/, '<blockquote$1 data-theme="dark">') : mod;
     }
    }
 }
