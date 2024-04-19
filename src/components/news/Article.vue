@@ -1,12 +1,13 @@
 <template>
-  <v-sheet class="my-2" style="border-radius: 30px;">
+  <v-sheet class="my-2" style="border-radius: 2px;">
     <div v-if="!twitter && !youtube">
       <div @click="openLink()" style="cursor: pointer; min-height: 100px;">
         <v-img
+          max-height="400"
           v-if="item['media:content'] && item['media:content'].$.medium == 'image'"
           width="100%"
           max-width="100%"
-          style="border-radius: 30px;"
+          style="border-radius: 0px;"
           :src="item['media:content'].$.url"
         >
           <template v-slot:placeholder>
@@ -35,8 +36,10 @@
       </div>
     </div>
     <v-sheet v-else @click="openLink()" style="font-size: 20px; cursor: pointer;">
-      {{  item.title }}
-      <v-sheet v-html="item.description" frameborder="0"></v-sheet>
+      <div v-if="youtube">
+        {{  item.title }}
+      </div>
+      <v-sheet v-html="blockquote" frameborder="0"></v-sheet>
     </v-sheet>
   </v-sheet>
 </template>
@@ -69,6 +72,13 @@ export default {
       // Extracting and returning the text content of the parsed document
       return doc.body.textContent || "";
     }
-  }
+  },
+  computed: {
+    blockquote() {
+      let mod = this.item.description
+
+      return mod.replace(/<blockquote([^>]*)>/, '<blockquote$1 data-theme="dark">');
+    }
+   }
 }
 </script>

@@ -1,19 +1,20 @@
 <template>
   <v-container style="height: 99vh; padding-top: 164px;">
-    <v-row>
-      <v-col
-        cols="12"
-        md="4"          
-        v-for="(item, i) in feed"
-        :key="'article' + i"
-      >
-        <Article 
-          :item="item" 
-          :twitter="chosen_button_or_first.twitter"
-          :youtube="chosen_button_or_first.youtube"
-        ></Article>
-      </v-col>
-    </v-row>
+    <v-sheet max-width="600">
+      <v-row>
+        <v-col
+          cols="12"
+          v-for="(item, i) in feed"
+          :key="'article' + i"
+        >
+          <Article 
+            :item="item"
+            :twitter="chosen_button_or_first.twitter"
+            :youtube="chosen_button_or_first.youtube"
+          ></Article>
+        </v-col>
+      </v-row>
+    </v-sheet>
   </v-container>
 </template>
 

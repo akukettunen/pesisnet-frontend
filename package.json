@@ -15,6 +15,7 @@
     "chart.js": "^3.9.1",
     "date-and-time": "^3.0.3",
     "dayjs": "^1.11.10",
+    "events": "^3.3.0",
     "gsap": "^3.12.5",
     "roboto-fontface": "*",
     "sass": "^1.69.5",

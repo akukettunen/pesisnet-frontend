@@ -15,7 +15,7 @@ const routes = [
   },
   {
     path: '/news',
-    component: () => import('@/layouts/default/Default.vue'),
+    component: () => import('@/layouts/NewsLayout.vue'),
     children: [
       {
         path: '',
