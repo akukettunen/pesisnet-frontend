@@ -1,5 +1,7 @@
 import a from '@/utils/axios'
+import axios from 'axios'
 import router from '@/router/index.js'
+import { handleGamesData } from '../../utils/games.js'
 
 const games = {
   namespaced: true,
@@ -46,10 +48,15 @@ const games = {
       commit('SET_LOADING_GAMES', true)
       commit('SET_GETTING_GAMES_FOR_DATE', date)
 
-      a(`/games?date=${date}`)
+      const url = `https://www.pesistulokset.fi/api/v1/matches-per-date?date=${date}`
+      console.log(url)
+      axios(url)
         .then(e => {
           if(date != getters.getting_games_for_date) return
-          commit('SET_DATE_GAMES', e.data)
+          console.log(e.data)
+          const games = handleGamesData({ games: e.data.data, maps: e.data.maps })
+          console.log('handled games: ', games)
+          commit('SET_DATE_GAMES', { organizers: games })
         })
         .catch(e => {
           alert(e)
