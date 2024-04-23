@@ -41,7 +41,7 @@
         Kauden 2023 lyönnit 3D-kartalla
       </div>
       <div style="text-align: center;">
-        <iframe style="border-radius: 10px;" v-show="animationKey" :key="animationKey" :src="`http://3d-field-frontend.s3-website.eu-central-1.amazonaws.com?player_id=${player.id}`" :width="windowWidth" height="500" frameborder="0"></iframe>
+        <iframe style="border-radius: 10px;" v-show="animationKey" :key="animationKey" :src="`https://3d.pesis.net?player_id=${player.id}`" :width="windowWidth" height="500" frameborder="0"></iframe>
       </div>
         
       <div style="text-align: center;">
