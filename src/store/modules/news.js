@@ -8,8 +8,15 @@ const games = {
       { text: 'Pesäpallo', feedUrl: 'https://rss.app/feeds/tW9pCSuLUwRZmZEn.xml', tooltip: 'Miesten superpesis' },
       { text: 'Superpesis.fi', feedUrl: 'https://rss.app/feeds/5Ok6rt2WUIihsKHk.xml' },
       { text: 'Supervuoro', feedUrl: 'https://rss.app/feeds/v6cXCAKIEK415n40.xml' },
+      { text: 'Elmo', feedUrl: 'https://rss.app/feeds/yr0132QvZb0aRigg.xml' },
       { text: '#pesis', feedUrl: 'https://rss.app/feeds/gNCz0sOCgNPCbGux.xml', icon: 'mdi-twitter', icon_color: 'blue', twitter: true },
-      { text: 'YouTube', feedUrl: 'https://rss.app/feeds/GkDFQhsm8PyYN26e.xml', icon: 'mdi-youtube', icon_color: 'red', dropdown: true, youtube: true },
+      { text: 'YouTube', icon: 'mdi-youtube', icon_color: 'red', dropdown: true, youtube: true, children: [
+          {
+            text: 'Superpesis',
+            feedUrl: 'https://rss.app/feeds/GkDFQhsm8PyYN26e.xml'
+          }
+        ] 
+      },
     ],
     chosen_button: null
   }),

@@ -60,7 +60,7 @@
         <v-btn
           v-for="btn in news_buttons" 
           :active="current_url === btn.feedUrl"
-          @click="SET_CHOSEN_NEWS_BUTTON(btn)"
+          @click="btn.children ? '' : SET_CHOSEN_NEWS_BUTTON(btn)"
           :key="btn.text + 'news_button'"
           :size="$vuetify.display.mobile ? 'x-small' : 'small'"
         >
@@ -74,6 +74,18 @@
           >
             {{ btn.tooltip }}
           </v-tooltip>
+          <v-menu activator="parent" v-if="btn.children">
+            <v-list dense>
+              <v-list-item
+                @click="SET_CHOSEN_NEWS_BUTTON(item)"
+                v-for="item in btn.children"
+                :key="item.text"
+                :active="current_url === item.feedUrl"
+              >
+                <v-list-item-title>{{ item.text }}</v-list-item-title>
+              </v-list-item>
+            </v-list>
+          </v-menu>
         </v-btn>
       </v-app-bar>
       <v-app-bar 

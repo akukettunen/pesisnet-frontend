@@ -1,5 +1,5 @@
 <template>
-  <v-card flat class="my-3">
+  <v-card id="cont-card" flat class="my-3">
     <div class="text-h4">
       Data tilanteittain
     </div>
@@ -36,6 +36,27 @@
       :data="pie_chart_data"
       :key="tilanne"
     ></pie-chart>
+    <v-sheet class="mt-5" v-if="all_events_length">
+      <div class="text-h5 mb-4">
+        Kauden 2023 lyönnit 3D-kartalla
+      </div>
+      <div style="text-align: center;">
+        <iframe style="border-radius: 10px;" v-show="animationKey" :key="animationKey" :src="`http://3d-field-frontend.s3-website.eu-central-1.amazonaws.com?player_id=${player.id}`" :width="windowWidth" height="500" frameborder="0"></iframe>
+      </div>
+        
+      <div style="text-align: center;">
+        <v-btn color="primary" @click="animationKey++">
+          <span v-if="!animationKey">
+            Aloita
+            <v-icon>mdi-play</v-icon>
+          </span>
+          <span v-else>
+            Alusta
+            <v-icon>mdi-replay</v-icon>
+          </span>
+        </v-btn>
+      </div>
+    </v-sheet>
   </v-card>
 </template>
 
@@ -47,15 +68,30 @@ export default {
   components: { PieChart, HitMap },
   data: () => ({
     tilanteet: ['0', '1', '1-2', 'Ajo'],
-    tilanne: '0'
+    tilanne: '0',
+    animationKey: 0
   }),
   computed: {
     ...mapGetters('players', [
-      'events'
+      'events',
+      'player'
     ]),
     tilanne_events() {
       if(!this.events) return []
       return this.events[this.tilanne]
+    },
+    windowWidth() {
+      return document.getElementById("cont-card").offsetWidth
+    },
+    all_events_length() {
+      if(!this.events) return
+      const keys = Object.keys(this.events)
+      let events = []
+      keys.forEach(key => {
+        events = events.concat(this.events[key])
+      })
+
+      return events.length
     },
     pie_chart_data() {
       if(!this.tilanne_events || !this.tilanne_events.length) return
