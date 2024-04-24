@@ -45,7 +45,7 @@
       </div>
         
       <div style="text-align: center;">
-        <v-btn color="primary" @click="animationKey++">
+        <v-btn color="primary" @click="openAnimation()">
           <span v-if="!animationKey">
             Aloita
             <v-icon>mdi-play</v-icon>
@@ -71,6 +71,15 @@ export default {
     tilanne: '0',
     animationKey: 0
   }),
+  inject: ['mixpanel'],
+  methods: {
+    openAnimation() {
+      this.animationKey++
+      this.mixpanel.track('3D map view', {
+        query: this.$route.query
+      });
+    }
+  },
   computed: {
     ...mapGetters('players', [
       'events',
