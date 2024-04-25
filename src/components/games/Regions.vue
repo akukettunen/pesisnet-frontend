@@ -1,11 +1,11 @@
 <template>
   <v-card flat>
-    <v-sheet style="justify-content: center; display: flex;" class="my-4">
+    <v-sheet style="text-align: center;" class="my-4">
       <v-btn 
         v-for="region in regions"
         class="ml-1"
         :key="region.id + 'region'"
-        size="small"
+        size="x-small"
         color="primary"
       >
         {{ region.name }}

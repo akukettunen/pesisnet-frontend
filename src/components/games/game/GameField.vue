@@ -27,8 +27,8 @@
       v-for="(hit, i) in hits" 
       :key="'hits' + i" 
       :style="`
-        height: 10px;
-        width: 10px;
+        height: 15px;
+        width: 15px;
         background-color: ${getHitColor(hit)};
         position: absolute;
         top: ${getHitPosition(hit).y}px;
