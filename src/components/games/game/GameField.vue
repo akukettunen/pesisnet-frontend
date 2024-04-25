@@ -18,15 +18,34 @@
     <v-img
       ref="ball"
       id="ball"
-      :style="`z-index: 2; position: absolute; top: ${ball_pos.x}px; left: ${ball_pos.y}px; height: 1px; width: 1px;`"
+      :style="`z-index: 2; position: absolute; top: 0px; left: 0px; height: 1px; width: 1px;`"
       height="25"
       width="25"
       src="@/assets/images/ball.png"
     />
+    <div 
+      v-for="(hit, i) in hits" 
+      :key="'hits' + i" 
+      :style="`
+        height: 10px;
+        width: 10px;
+        background-color: ${getHitColor(hit)};
+        position: absolute;
+        top: ${getHitPosition(hit).y}px;
+        left: ${getHitPosition(hit).x}px;
+        border-radius: 50%;
+      `"
+    >
+      <v-tooltip activator="parent">
+        <div v-for="(instant, i) in hit.events" :key="'map_instant' + i">
+          {{ event_text(hit, instant, i).text }}
+        </div>
+      </v-tooltip>
+    </div>
     <v-sheet 
       style="height: 30px; width: 100px; position: absolute; background-color: rgba(0, 0, 0, 0);" 
       v-for="player in bases.filter(b => !!b)" 
-      :key="player" 
+      :key="player"
       :id="`player_${player}`"
     >
       <player-badge :player_id="player" :team_id="hitting_team_id"/>
@@ -41,6 +60,7 @@
         Jari Lettunen
       </div>
     </div> -->
+    <!-- {{ hits }} -->
   </div>
 </template>
 
@@ -53,10 +73,6 @@ export default {
   props: ['height', 'width', 'hits'],
   components: { PlayerBadge },
   data: () => ({
-    ball_pos: {
-      x: 0,
-      y: 0
-    },
     prev_rot: 1,
     home_base: { x: 0.4 ,y: 0.9 },
     first_base: { x: 0.2 ,y: 0.60 },
@@ -67,6 +83,20 @@ export default {
     hitting_team_id: null
   }),
   methods: {
+    getHitPosition(hit) {
+      hit = hit.hit
+      return {
+        x: parseFloat(hit.x) / 100 * this.width - 12.5,
+        y: parseFloat(hit.y) / 100 * this.height / 1.28 - 17.5
+      }
+    },
+    getHitColor(hit) {
+      if(hit.is_haava) return 'yellow'
+      else if(hit.is_fail) return 'red'
+      if(hit.is_success) return 'green'
+
+      return 'grey'
+    },
     handleEvent(event) {
       this.eventRefresh(event)
 
@@ -200,11 +230,6 @@ export default {
       gsap.to("#ball", { duration: 0.4, height: 15, width: 15, delay: 0.5, x: 0, y: 0, ease: "power1.in" });
       gsap.to("#ball", { duration: 0.8, height: 25, width: 25,  left: x, top: y, rotation: 320 * this.prev_rot, delay: 0.9 });
       this.prev_rot = -this.prev_rot
-
-      // this.ball_pos = {
-      //   x: parseFloat(hit.x) / 100 * this.width - 12.5,
-      //   y: parseFloat(hit.y) / 100 * this.height / 1.28 - 17.5
-      // }
     },
     hideBall() {
       gsap.to("#ball", { duration: 0.2, height: 0, width: 0, x: 12.5, y: 12.5 });
@@ -222,7 +247,8 @@ export default {
       'opened_event',
       'inning_events_by_event',
       'events',
-      'reversed_events'
+      'reversed_events',
+      'event_text'
     ])
   }
 }

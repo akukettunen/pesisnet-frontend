@@ -22,10 +22,10 @@
       <!-- EVERY INSTANT HAS A runnersAtBases -->
       <!-- {{ instant }} -->
       <span>
-        {{ event_text(instant, i).text }}
+        {{ event_text(event, instant, i).text }}
       </span>
       <span style="width: 70px; flex-grow: 1; text-align: right;">
-        <v-icon size="18" color="red" v-for="(_, i) in event_text(instant, i).outs" :key="`out-${i}`">mdi-close</v-icon>
+        <v-icon size="18" color="red" v-for="(_, i) in event_text(event, instant, i).outs" :key="`out-${i}`">mdi-close</v-icon>
       </span>
     </v-sheet>
     <v-divider></v-divider>
@@ -39,7 +39,8 @@ export default {
   computed: {
     ...mapGetters('game', [
       'game',
-      'outsUpToEvent'
+      'outsUpToEvent',
+      'event_text'
     ]),
     reversed_events() {
       return this.event.events.reverse()
@@ -49,36 +50,6 @@ export default {
     ...mapActions('game', [
       'openEvent'
     ]),
-    event_text(a, index) {
-      let ret = {}
-
-      const text = a.texts.map((t) => {
-        if(typeof t == 'string') return t
-        else if (t.type == "stat" && t.out) ret['outs'] = this.outsUpToEvent(this.event, index)
-        else if (t.type == 'player') {
-          const side = this.game.home?.id == t.team ? 'home' : 'away'
-          return this.game[side]?.players.find(p => (p.id == t.id && t.id) || (p.number == t.number && t.number))?.name
-        } else if(t.type == 'team') {
-          const side = this.game.home?.id == t.team ? 'home' : 'away'
-          return this.game[side].name
-        } else if(t.type == "substitution") {
-          const side = this.game.home?.id == t.team ? 'home' : 'away'
-          if(!side) return
-
-          const lineup = t.as?.newLineUp || t.newLineUp
-          const names = lineup.map((id, i) => {
-            let val = (i + 1) + '. ' + this.game[side].players.find(p => p.id == id || p.number == id).name + ( i + 1 == t.as?.newLineUp.length ? '' : ',' )
-            return val
-          })
-
-          return names.join('\n')
-        }
-        else return t.text
-      })
-      .filter(e => !!e).join(' ')
-
-      return { text, ...ret }
-    }
   }
 }
 </script>

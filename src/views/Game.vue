@@ -4,6 +4,7 @@
     <v-sheet class="pa-2" style="height: 100%;">
       <GameHeader/>
       <!-- Fin {{ finished }} -->
+      <!-- {{ events }} -->
       <div></div>
       <GameLiveBar/>
       <v-expand-transition>
@@ -11,73 +12,62 @@
           v-if="events && events.length"
         />
       </v-expand-transition>
-      <!-- <div class="my-5" v-for="a in happening_type_events" :key="a">
-        {{ a }}
-      </div>
-      <div class="my-5" v-for="a in events" :key="a">
-        {{ a }}
-      </div> -->
-      <v-row style="flex-direction: row;" class="my-5">
-        <v-col v-for="side in ['home', 'away']" :key="`${side}-game-data-table-stats`" cols="12" md="6">
-          <v-skeleton-loader
-            type="list-item-three-line	, list-item-three-line	, list-item-three-line	"
-            style="width: 100%; max-width: calc(100vw - 32px); justify-content: center; display: flex;"
-            :loading="loading_game"
-          >
-            <DataTable @cell-clicked="handleCellClicked($event)" :data="stats_table(side)" />
-          </v-skeleton-loader>
-          <Prizes :side="side"></Prizes>
-        </v-col>
-      </v-row>
+      <game-data-tables @cell-clicked="handleCellClicked($event)"></game-data-tables>
     </v-sheet>
+    <game-field-dialog :hits="hits" @close="SET_SHOW_FIELD(false)" :title="title" :value="show_field"></game-field-dialog>
   </v-container>
 </template>
 
 <script>
 import GameBar from '@/components/games/game/GameBar.vue'
 import GameHeader from '@/components/games/game/GameHeader.vue'
-import DataTable from '@/components/data/DataTable.vue'
 import GameEvents from '@/components/games/game/GameEvents.vue'
-import Prizes from '@/components/games/game/Prizes.vue'
+import GameDataTables from '@/components/games/game/GameDataTables.vue'
 import GameLiveBar from '@/components/games/game/GameLiveBar.vue'
-
-import { mapActions, mapGetters } from 'vuex'
+import GameFieldDialog from '@/components/games/game/GameFieldDialog.vue'
+import { mapActions, mapGetters, mapMutations } from 'vuex'
 
 export default {
-  components: { GameHeader, GameBar, DataTable, GameEvents, Prizes, GameLiveBar },
-  data: () => ({
-    event_polling_interval: null
-  }),
+  components: { GameHeader, GameBar, GameEvents, GameLiveBar, GameFieldDialog, GameDataTables },
   created() {
     this.getGameData({ id: this.$route.params.id })
   },
+  data() {
+    return {
+      event_polling_interval: null,
+      hits: [],
+      title: ''
+    }
+  },
   methods: {
+    handleCellClicked(e) {
+      this.hits = this.hits_by_player(e.row.player_id)
+      this.title = e.row.player
+      this.SET_SHOW_FIELD(true)
+    },
     ...mapActions('game', [
       'getGameData',
       'startPollingEvents',
       'pollGameEvents',
       'stopEventPollingInterval'
     ]),
-    handleCellClicked(e) {
-      if(e.column == 'pointhits') {
-        let fil_events = this.events.filter(event => event.batter == e.row.player_id && event.groupType == 'o')
-
-        console.log(fil_events)
-      }
-    }
+    ...mapMutations('game', [
+      'SET_SHOW_FIELD'
+    ])
   },
   computed: {
     ...mapGetters('game', [
-      'events', 
       'game',
       'stat_type_events',
       'happening_type_events',
       'stat_points',
       'stats_by_hitter',
-      'stats_table',
       'loading_game',
       'game_data',
-      'finished'
+      'finished',
+      'hits_by_player',
+      'show_field',
+      'events'
     ])
   },
   unmounted() {

@@ -1,6 +1,4 @@
 const handleGamesData = ({ games, maps }) => {
-  console.log('games: ', games)
-  console.log('maps: ', maps)
   let organizers = maps.organizer?.map(o => o.value).sort((a, b) => a.id - b.id)
   organizers = organizers?.map(o => {
     return {

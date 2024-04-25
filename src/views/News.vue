@@ -58,7 +58,6 @@ export default {
 
       this.$nextTick(() => {
         if (window.twttr && window.twttr.widgets) {
-          console.log(this.index, 'moro')
           // This processes all elements with class 'twitter-tweet' to render the embedded tweet
           window.twttr.widgets.load();
         }

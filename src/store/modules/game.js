@@ -27,7 +27,8 @@ const game = {
       player_name: null,
       player_id: null
     },
-    latest_hitter: null
+    latest_hitter: null,
+    show_field: false
   }),
   mutations: {
     RESET_GAME_DATA(state) {
@@ -80,6 +81,9 @@ const game = {
     },
     SET_LATEST_HITTER(state, val) {
       state.latest_hitter = val
+    },
+    SET_SHOW_FIELD(state, val) {
+      state.show_field = val
     }
   },
   actions: {
@@ -93,7 +97,6 @@ const game = {
       a(`/games/${id}`)
         .then(e => {
           if(getters.loading_game_id != id) return
-
             const simulate = false
           if(simulate) {
             commit('SET_EVENTS_TO_BE_SIMULATED', e.data.events)
@@ -135,7 +138,6 @@ const game = {
 
       bases.forEach((r, i) => {
         if(i == 0 && r) {
-          console.log('te')
           dispatch('handleHitter', { player_id: r, team_id })
         } else if(i == 0) {
           commit('SET_LATEST_HITTER', null)
@@ -235,11 +237,42 @@ const game = {
     events_to_be_simulated: state => state.events_to_be_simulated,
     opened_event: state => state.opened_event,
     events: state => state.events,
+    show_field: state => state.show_field,
     latest_hitter: state => state.latest_hitter,
     latest_runner_data: state => state.latest_runner_data,
     event_polling_interval: state => state.event_polling_interval,
     reversed_events: (_, getters) => {
       return [...getters.events].reverse()
+    },
+    event_text: (_, getters) =>  (event, a, index) => {
+      let ret = {}
+
+      const text = a.texts.map(t => {
+        if(typeof t == 'string') return t
+        else if (t.type == "stat" && t.out) ret['outs'] = getters.outsUpToEvent(event, index)
+        else if (t.type == 'player') {
+          const side = getters.game.home?.id == t.team ? 'home' : 'away'
+          return getters.game[side]?.players.find(p => (p.id == t.id && t.id) || (p.number == t.number && t.number))?.name
+        } else if(t.type == 'team') {
+          const side = getters.game.home?.id == t.team ? 'home' : 'away'
+          return getters.game[side].name
+        } else if(t.type == "substitution") {
+          const side = getters.game.home?.id == t.team ? 'home' : 'away'
+          if(!side) return
+
+          const lineup = t.as?.newLineUp || t.newLineUp
+          const names = lineup.map((id, i) => {
+            let val = (i + 1) + '. ' + getters.game[side].players.find(p => p.id == id || p.number == id).name + ( i + 1 == t.as?.newLineUp.length ? '' : ',' )
+            return val
+          })
+
+          return names.join('\n')
+        }
+        else return t.text
+      })
+      .filter(e => !!e).join(' ')
+
+      return { text, ...ret }
     },
     player_by_team_id_and_player_id: (_, getters) => ({ team_id, player_id }) => {
       const side = getters.game.home?.id == team_id ? 'home' : 'away'
@@ -364,6 +397,30 @@ const game = {
       }
 
       return data
+    },
+    hits_by_player: (_, getters) => (player_id) => {
+      const hits = getters.events.filter(ev => {
+        // ev.events[0].texts?.find(t => t.type == 'hit')?.hit
+
+        return ev.batter == player_id && !!ev.hit
+      })
+
+      if(!hits || !hits.length) return []
+
+      const hits_mapped = hits.map(h => {
+        const is_fail = h.events.some(e => e.texts.some(t => !!t.pointhitf || t.pointhitf == 0))
+        const is_haava = h.events.some(e => e.texts.some(t => (!!t.pointhitf || t.pointhitf == 0) && h.hit.caught))
+        const is_success = h.events.some(e => e.texts.some(t => !!t.pointhits || t.pointhits == 0))
+
+        return {
+          ...h,
+          is_fail,
+          is_success,
+          is_haava
+        }
+      })
+
+      return hits_mapped
     },
     stats_table: (_, getters) => side => {
       if(!getters.game?.id) return { headers: [], data: [] }

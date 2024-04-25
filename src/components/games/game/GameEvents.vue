@@ -19,7 +19,7 @@
         </span>
       </div>
       <div style="position: relative; justify-content: center;" class="d-flex">
-        <GameField ref="field" :hits="[{x: 0.5, y: 0.4}]" :width="width" :height="height" />
+        <GameField ref="field" :width="width" :height="height" />
       </div>
       <div>
         <runner-badge></runner-badge>
