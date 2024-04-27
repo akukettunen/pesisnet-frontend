@@ -1,5 +1,5 @@
 <template>
-  <v-container fluid class="px-0" style="padding-top: 74px; max-width: 1000px;">
+  <v-container fluid class="px-0" :style="`padding-top: ${$vuetify.display.mobile ? '0' : '74'}px;`" style="max-width: 1000px;">
     <!-- {{ game }} -->
     <v-sheet class="pa-2" style="height: 100%;">
       <GameHeader/>

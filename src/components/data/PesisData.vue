@@ -1,5 +1,5 @@
 <template>
-  <v-container style="padding-top: 150px;">
+  <v-container :style="`padding-top: ${$vuetify.display.mobile ? '80' : '150'}px`">
     <ChooseSeries @update="handleUpdate()" />
     <div style="justify-content: center; display: flex;" class="mb-15 mt-10">
       <data-table

@@ -1,5 +1,5 @@
 <template>
-  <v-container style="padding-top: 150px;">
+  <v-container :style="`padding-top: ${$vuetify.display.mobile ? '80' : '150'}px`">
     <ChooseSeries @update="handleUpdate()" />
     <v-sheet class="mt-10">
       <v-row style="justify-content: center;" v-if="!loading_maps && !loading_boards && boards">

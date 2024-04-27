@@ -1,5 +1,5 @@
 <template>
-  <v-card class="pa-3" style="z-index: 0; max-width: 100vw;">
+  <v-card elevation="0" class="pa-3" style="z-index: 0; max-width: 100vw;">
     <v-row v-if="player && !loading_player">
       <v-col class="justify-center d-flex" cols="12" md="4">
         <v-avatar 

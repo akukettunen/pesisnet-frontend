@@ -1,6 +1,6 @@
 <!-- eslint-disable vue/multi-word-component-names -->
 <template>
-  <v-container :style="`padding: ${$vuetify.display.mobile ? '0px' : ''}`" fluid style="padding-top: 100px; max-width: 1000px;">
+  <v-container :style="`padding: ${$vuetify.display.mobile ? '0px' : ''}; padding-top: ${$vuetify.display.mobile ? '10' : '100'}px;`" fluid style="max-width: 1000px;">
     <DateChooser />
     <v-sheet v-if="!loading_games && date_games.organizers">
       <v-expansion-panels accordion v-model="panels" multiple>

@@ -1,5 +1,5 @@
 <template>
-  <v-container style="padding-top: 150px">
+  <v-container :style="`padding-top: ${$vuetify.display.mobile ? '80' : '150'}px`">
     <choose-season
       v-model:base="base"
       v-model:league_id="league_id"

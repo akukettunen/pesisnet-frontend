@@ -1,10 +1,7 @@
 <template>
-  <v-container :fluid="$vuetify.display.mobile" class="mx-auto" style="height: 100%; max-width: 100vw;">
-    <v-app-bar>
-      <v-btn style="padding-top: 100px;"></v-btn>
-    </v-app-bar>
-    <v-card max-width="1000" flat class="px-3 mx-auto" :style="`padding-top: ${$vuetify.display.mobile ? '20px' : '80px'}; height: 100%;`">
-      <v-card style="z-index: 10;" class="pa-2 overflow-visible" flat>
+  <v-container fluid class="mx-auto" :style="`padding: ${$vuetify.display.mobile ? '0' : ''}`" style="max-width: 100vw; min-height: 90vh;">
+    <v-card elevation="0" max-width="1000" flat class="px-3 mx-auto" :style="`padding-top: ${$vuetify.display.mobile ? '40' : '100'}px; height: 100%;`">
+      <v-card elevation="0" style="z-index: 10;" class="pa-2 overflow-visible flat">
         <!-- <v-card-title>
           <v-icon>mdi-account-outline</v-icon>
           Pelaajahaku

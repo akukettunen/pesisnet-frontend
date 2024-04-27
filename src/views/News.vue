@@ -1,5 +1,5 @@
 <template>
-  <v-container :key="current_url" style="height: 99vh; padding-top: 164px;">
+  <v-container :key="current_url" :style="`padding-top: ${$vuetify.display.mobile ? '75' : '164'}px;`">
     <v-sheet class="pa-10" max-width="600" v-if="loading_feed">
       <v-skeleton-loader 
         class="my-4"
