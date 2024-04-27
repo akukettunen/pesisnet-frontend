@@ -98,6 +98,7 @@ export default {
       return 'grey'
     },
     handleEvent(event) {
+      if(this.hits) return 
       this.eventRefresh(event)
 
       const eventIndex = [...this.reversed_events].findIndex(e => e.id === event.id)

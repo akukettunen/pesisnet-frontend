@@ -398,11 +398,12 @@ const game = {
 
       return data
     },
-    hits_by_player: (_, getters) => (player_id) => {
+    hits_by_player: (_, getters) => ({ player_id, player_number }) => {
       const hits = getters.events.filter(ev => {
+        console.log(ev.batter)
         // ev.events[0].texts?.find(t => t.type == 'hit')?.hit
 
-        return ev.batter == player_id && !!ev.hit
+        return (ev.batter == player_id || ev.batter == player_number) && !!ev.hit
       })
 
       if(!hits || !hits.length) return []
@@ -467,7 +468,8 @@ const game = {
             kl_percentage: kl_per,
             pmv: player_stats?.pmv || '-',
             side,
-            player_id: player.id || player.number
+            player_id: player.id || player.number,
+            player_number: player.number
             // player
           }
         })

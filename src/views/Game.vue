@@ -1,6 +1,6 @@
 <template>
   <v-container fluid class="px-0" :style="`padding-top: ${$vuetify.display.mobile ? '0' : '74'}px;`" style="max-width: 1000px;">
-    <!-- {{ game }} -->
+    <!-- {{ game_data }} -->
     <v-sheet class="pa-2" style="height: 100%;">
       <GameHeader/>
       <!-- Fin {{ finished }} -->
@@ -41,7 +41,8 @@ export default {
   },
   methods: {
     handleCellClicked(e) {
-      this.hits = this.hits_by_player(e.row.player_id)
+      console.log(e.row)
+      this.hits = this.hits_by_player({ player_id: e.row.player_id, player_number: e.row.player_number })
       this.title = e.row.player
       this.SET_SHOW_FIELD(true)
     },
