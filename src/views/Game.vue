@@ -42,7 +42,7 @@ export default {
   methods: {
     handleCellClicked(e) {
       console.log(e.row)
-      this.hits = this.hits_by_player({ player_id: e.row.player_id, player_number: e.row.player_number })
+      this.hits = this.hits_by_player({ player_id: e.row.player_id, player_number: e.row.player_number, side: e.row.side })
       this.title = e.row.player
       this.SET_SHOW_FIELD(true)
     },

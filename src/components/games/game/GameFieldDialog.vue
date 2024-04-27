@@ -4,7 +4,7 @@
       <v-btn @click="$emit('close')" style="position: absolute !important; top: 10px; right: 10px;" variant="text">
         <v-icon>mdi-close</v-icon>
       </v-btn>
-      <v-card style="display: flex; flex-direction: column; justify-content: center;" class="pt-10 pb-5 pa-5" :width="width + 30">
+      <v-card elevation="0" style="display: flex; flex-direction: column; justify-content: center;" class="pt-10 pb-5 pa-5" :width="width + 30">
         <v-card-title>
           {{ title }}
         </v-card-title>

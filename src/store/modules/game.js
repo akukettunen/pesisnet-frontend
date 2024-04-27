@@ -398,12 +398,12 @@ const game = {
 
       return data
     },
-    hits_by_player: (_, getters) => ({ player_id, player_number }) => {
+    hits_by_player: (_, getters) => ({ player_id, player_number, side }) => {
       const hits = getters.events.filter(ev => {
-        console.log(ev.batter)
         // ev.events[0].texts?.find(t => t.type == 'hit')?.hit
+        const event_side = getters.game.home.id == ev.team ? 'home' : 'away'
 
-        return (ev.batter == player_id || ev.batter == player_number) && !!ev.hit
+        return (ev.batter == player_id || (ev.batter == player_number && event_side == side)) && !!ev.hit
       })
 
       if(!hits || !hits.length) return []
