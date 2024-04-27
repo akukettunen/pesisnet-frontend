@@ -14,6 +14,10 @@ const routes = [
     ],
   },
   {
+    path: '/privacy',
+    component: () => import('@/views/Privacy.vue'),
+  },
+  {
     path: '/news',
     component: () => import('@/layouts/NewsLayout.vue'),
     children: [
