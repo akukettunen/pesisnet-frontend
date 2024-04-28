@@ -298,18 +298,19 @@ const game = {
 
         const stat = e.events.map(event => {
           let conc = []
+          let player = event.texts.find(p => p.type == 'player' && p.role != 'batter')
 
           if(event.texts.map(t => t.score || t.walkscore || t.wtscore).includes(1)) {
             conc = {
               ran_run: 1,
               type: 'stat',
-              player_id: event.texts.find(p => p.type == 'player' && p.role != 'batter')['number']
+              player_id: player['number'] || player['id']
             }
           } else if(event.texts.map(t => t.score || t.walkscore || t.wtscore).includes(3)) {
             conc = [{
               ran_run: 1,
               type: 'stat',
-              player_id: event.texts.find(p => p.type == 'player' && p.role != 'batter')['id']
+              player_id: player['id'] || player['number']
             }]
           }
 
@@ -463,10 +464,19 @@ const game = {
 
       for (let player of getters.game[side].players) {
         let player_identifier = `${player.id}_${side}`
+        let player_stats = getters.stats_by_hitter[side][player_identifier]
+        if(!player_stats) {
+          player_identifier = `${player.number}_${side}`
+          player_stats = getters.stats_by_hitter[side][player_identifier]
+        }
 
         for (let base = 0; base < 4; base++) {
-          const s = getters.stats_by_hitter[side][player_identifier]['pointhits' + base] || 0
-          const f = getters.stats_by_hitter[side][player_identifier]['pointhitf' + base] || 0
+          let s, f;
+          if(!getters.stats_by_hitter[side][player_identifier]) s = 0
+          else s = getters.stats_by_hitter[side][player_identifier]['pointhits' + base] || 0
+
+          if(!getters.stats_by_hitter[side][player_identifier]) f = 0
+          else f = getters.stats_by_hitter[side][player_identifier]['pointhitf' + base] || 0
 
           total_pointhits[base] = [
             total_pointhits[base][0] + s, total_pointhits[base][1] + s + f

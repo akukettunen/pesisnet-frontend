@@ -65,7 +65,7 @@
 import DataTableColumn from './DataTableColumn.vue'
 export default {
   components: { DataTableColumn },
-  props: ['data', 'density', 'loading', 'orderable'],
+  props: ['data', 'density', 'loading', 'unorderable'],
   data: () => ({
     sort: {
       key: null,
