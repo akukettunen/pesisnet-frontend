@@ -349,7 +349,6 @@ const game = {
         if(!batters[key]) batters[key] = getEmptyStats()
 
         s.stats?.forEach(b => {
-
           if(b.pointhitf || b.pointhitf == 0) {
             batters[key]['pointhitf' + b.pointhitf]++
             batters[key]['pointhitf']++
@@ -403,6 +402,7 @@ const game = {
         // ev.events[0].texts?.find(t => t.type == 'hit')?.hit
         const event_side = getters.game.home.id == ev.team ? 'home' : 'away'
 
+        if(player_id == 'total') return event_side == side && !!ev.hit
         return (ev.batter == player_id || (ev.batter == player_number && event_side == side)) && !!ev.hit
       })
 
@@ -425,54 +425,107 @@ const game = {
     },
     stats_table: (_, getters) => side => {
       if(!getters.game?.id) return { headers: [], data: [] }
+
+      const headers = [
+        { text: 'Pelaaja', key: 'player', lock: true, left: true },
+        { text: 'UP', key: 'outfield_pos', long_text: 'Ulkopelipaikka' },
+        { text: 'K', key: 'homeruns', long_text: 'Kunnarit' },
+        { text: 'L', key: 'score', long_text: 'Lyödyt' },
+        { text: 'T', key: 'ran_runs', long_text: 'Tuodut' },
+        { text: 'KL', key: 'pointhits', long_text: 'Kärkilyönnit / Kärkilyöntiyritykset' },
+        { text: '1%', key: 'pointhits0', long_text: 'Kärkilyönnit 0-til' },
+        { text: '2%', key: 'pointhits1', long_text: 'Kärkilyönnit 1-til' },
+        { text: '3%', key: 'pointhits2', long_text: 'Kärkilyönnit 2-til' },
+        { text: 'K%', key: 'pointhits3', long_text: 'Kärkilyönnit kotiin' },
+        { text: 'KL%', key: 'kl_percentage', long_text: 'Kärkilyöntiprosentti' },
+        { text: 'PMV', key: 'pmv', long_text: 'Palot mailan varressa' },
+      ]
+
+      var total_pointhits = {
+        tot: [0, 0],
+        0: [0, 0],
+        1: [0, 0],
+        2: [0, 0],
+        3: [0, 0],
+      }
+
+      let last_row = {
+        player: 'Yhteensä',
+        player_id: 'total',
+        outfield_pos: '-',
+        homeruns: 0,
+        score: 0,
+        ran_runs: 0,
+        kl_percentage: 0,
+        pmv: 0,
+        side
+      }
+
+      for (let player of getters.game[side].players) {
+        let player_identifier = `${player.id}_${side}`
+
+        for (let base = 0; base < 4; base++) {
+          const s = getters.stats_by_hitter[side][player_identifier]['pointhits' + base] || 0
+          const f = getters.stats_by_hitter[side][player_identifier]['pointhitf' + base] || 0
+
+          total_pointhits[base] = [
+            total_pointhits[base][0] + s, total_pointhits[base][1] + s + f
+          ]
+          total_pointhits['tot'] = [
+            total_pointhits['tot'][0] + s, total_pointhits['tot'][1] + s + f
+          ]
+        }
+      }
+
+      let data = getters.game[side].players.map(player => {
+        let player_identifier = `${player.id}_${side}`
+        let player_stats = getters.stats_by_hitter[side][player_identifier]
+        if(!player_stats) {
+          player_identifier = `${player.number}_${side}`
+          player_stats = getters.stats_by_hitter[side][player_identifier]
+        }
+
+        const kl = player_stats?.pointhits || 0
+        const yri = kl + player_stats?.pointhitf || 0
+        const klperyrit = (kl == 0 && yri == 0) ? '-' : `${kl}/${yri}`
+        let kl_per = yri ? `${parseInt(((kl / yri) * 100).toFixed(0))}%` : '-'
+        
+        last_row.homeruns += player_stats?.homeruns
+        last_row.score += player_stats?.score
+        last_row.ran_runs += player_stats?.ran_runs
+        last_row.pmv += player_stats?.pmv
+
+        return {
+          player: `${player.number}. ${player.first_name} ${player.last_name}`,
+          outfield_pos: player.defensive_position.short_name || '-',
+          homeruns: player_stats?.homeruns || '-',
+          score: player_stats?.score || '-',
+          ran_runs: player_stats?.ran_runs || '-',
+          pointhits: klperyrit,
+          pointhits0: getters.get_point_hits_string(player_identifier, 0, side),
+          pointhits1: getters.get_point_hits_string(player_identifier, 1, side),
+          pointhits2: getters.get_point_hits_string(player_identifier, 2, side),
+          pointhits3: getters.get_point_hits_string(player_identifier, 3, side),
+          kl_percentage: kl_per,
+          pmv: player_stats?.pmv || '-',
+          side,
+          player_id: player.id || player.number,
+          player_number: player.number
+          // player
+        }
+      })
+
+      last_row['pointhits'] = `${total_pointhits.tot[0]}/${total_pointhits.tot[1]}`
+      last_row['pointhits0'] = `${total_pointhits[0][0]}/${total_pointhits[0][1]}`
+      last_row['pointhits1'] = `${total_pointhits[1][0]}/${total_pointhits[1][1]}`
+      last_row['pointhits2'] = `${total_pointhits[2][0]}/${total_pointhits[2][1]}`
+      last_row['pointhits3'] = `${total_pointhits[3][0]}/${total_pointhits[3][1]}`
+      last_row['kl_percentage'] = total_pointhits.tot[1] ? `${parseInt(((total_pointhits.tot[0] / total_pointhits.tot[1]) * 100).toFixed(0))}%` : '-'
+
       return {
         title: '',
-        headers: [
-          { text: 'Pelaaja', key: 'player', lock: true, left: true },
-          { text: 'UP', key: 'outfield_pos', long_text: 'Ulkopelipaikka' },
-          { text: 'K', key: 'homeruns', long_text: 'Kunnarit' },
-          { text: 'L', key: 'score', long_text: 'Lyödyt' },
-          { text: 'T', key: 'ran_runs', long_text: 'Tuodut' },
-          { text: 'KL', key: 'pointhits', long_text: 'Kärkilyönnit / Kärkilyöntiyritykset' },
-          { text: '1%', key: 'pointhits0', long_text: 'Kärkilyönnit 0-til' },
-          { text: '2%', key: 'pointhits1', long_text: 'Kärkilyönnit 1-til' },
-          { text: '3%', key: 'pointhits2', long_text: 'Kärkilyönnit 2-til' },
-          { text: 'K%', key: 'pointhits3', long_text: 'Kärkilyönnit kotiin' },
-          { text: 'KL%', key: 'kl_percentage', long_text: 'Kärkilyöntiprosentti' },
-          { text: 'PMV', key: 'pmv', long_text: 'Palot mailan varressa' },
-        ],
-        data: getters.game[side].players.map(player => {
-          let player_identifier = `${player.id}_${side}`
-          let player_stats = getters.stats_by_hitter[side][player_identifier]
-          if(!player_stats) {
-            player_identifier = `${player.number}_${side}`
-            player_stats = getters.stats_by_hitter[side][player_identifier]
-          }
-
-          const kl = player_stats?.pointhits || 0
-          const yri = kl + player_stats?.pointhitf || 0
-          const klperyrit = (kl == 0 && yri == 0) ? '-' : `${kl}/${yri}`
-          let kl_per = yri ? `${parseInt(((kl / yri) * 100).toFixed(0))}%` : '-'
-          
-          return {
-            player: `${player.number}. ${player.first_name} ${player.last_name}`,
-            outfield_pos: player.defensive_position.short_name || '-',
-            homeruns: player_stats?.homeruns || '-',
-            score: player_stats?.score || '-',
-            ran_runs: player_stats?.ran_runs || '-',
-            pointhits: klperyrit,
-            pointhits0: getters.get_point_hits_string(player_identifier, 0, side),
-            pointhits1: getters.get_point_hits_string(player_identifier, 1, side),
-            pointhits2: getters.get_point_hits_string(player_identifier, 2, side),
-            pointhits3: getters.get_point_hits_string(player_identifier, 3, side),
-            kl_percentage: kl_per,
-            pmv: player_stats?.pmv || '-',
-            side,
-            player_id: player.id || player.number,
-            player_number: player.number
-            // player
-          }
-        })
+        headers,
+        data: data.concat(last_row)
       }
     },
     inning_events_by_event: (_, getters) => event => {

@@ -65,7 +65,7 @@
 import DataTableColumn from './DataTableColumn.vue'
 export default {
   components: { DataTableColumn },
-  props: ['data', 'density', 'loading'],
+  props: ['data', 'density', 'loading', 'orderable'],
   data: () => ({
     sort: {
       key: null,
@@ -74,6 +74,7 @@ export default {
   }),
   methods: {
     handleSort(key) {
+      if(this.unorderable) return
       if(!this.sort.key || key !== this.sort.key) {
         this.sort = {
           key,

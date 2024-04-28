@@ -6,7 +6,7 @@
         style="width: 100%; max-width: calc(100vw - 32px); justify-content: center; display: flex;"
         :loading="loading_game"
       >
-        <DataTable @cell-clicked="$emit('cell-clicked', $event)" :data="stats_table(side)" />
+        <DataTable :unorderable="unorderable" @cell-clicked="$emit('cell-clicked', $event)" :data="stats_table(side)" />
       </v-skeleton-loader>
       <Prizes :side="side"></Prizes>
     </v-col>
