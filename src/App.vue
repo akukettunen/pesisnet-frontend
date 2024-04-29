@@ -135,6 +135,29 @@
       
       <router-view />
     </v-layout>
+    <v-dialog persistent bottom max-width="800" :model-value="show_app_banner" location="bottom">
+      <v-card class="d-flex pa-5 pb-0">
+        <div>
+          <v-card-text style="text-align: center;">
+            Näytät olevan mobiililaitteella...
+          </v-card-text>
+          <v-card-title style="text-align: center;">
+            Lataa PesisNet applikaatio!
+          </v-card-title>
+          <div class="padding: 40px;">
+            <v-btn color="blue" block :href="storeLink" target="_blank">
+              Lataa PesisNet appi<v-icon class="ml-2">{{ storeIcon }}</v-icon>
+            </v-btn>
+            <v-btn @click="show_app_banner = false" class="mt-4" style="margin: 0;" block>Jatka selaimessa</v-btn>
+          </div>
+        </div>
+        <div style="height: 150px; overflow-y: hidden;">
+          <div style="height: 300px;">
+            <v-img height="500" src="./assets/images/app_mockup.png"></v-img>
+          </div>
+        </div>
+      </v-card>
+    </v-dialog>
   </v-container>
 </template>
 
@@ -177,15 +200,31 @@ export default {
       next();
     });
   },
-  created() {
+  mounted() {
     this.initMaps()
+
+    const is_app = localStorage.getItem('pesisnet-app');
+    if (this.$vuetify.display.mobile && this.isApple && !is_app) {
+      const lastShown = localStorage.getItem('mobile-banner-shown');
+      const now = Date.now();
+      const oneWeek = 7 * 24 * 60 * 60 * 1000; // milliseconds in a week
+
+      // Check if the banner has been shown in the past week
+      if (!lastShown || now - lastShown > oneWeek) {
+        this.show_app_banner = true;
+        localStorage.setItem('mobile-banner-shown', now);
+      } else {
+        this.show_app_banner = false;
+      }
+    }
   },
   data: () => ({
     app_bar_buttons: [
       { text: 'Pelit', text_mobile: "Pelit", icon: 'mdi-play-box-outline', route: '/games' },
       { text: 'Uutiset & Some', text_mobile: "Uutiset", icon: 'mdi-newspaper-variant-outline', route: '/news' },
       { text: 'Data & Tilastot', text_mobile: "Data", icon: 'mdi-database-outline', route: '/stats' },
-    ]
+    ],
+    show_app_banner: false
   }),
   methods: {
     ...mapActions('data', [
@@ -199,7 +238,39 @@ export default {
     ...mapGetters('news', [
       'news_buttons',
       'current_url',
-    ])
+    ]),
+    isApple() {
+      let userAgent = navigator.userAgent || window.opera;
+
+      // Check for iOS devices
+      if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
+        return true
+      }
+
+      return false
+    },
+    storeLink() {
+      let userAgent = navigator.userAgent || window.opera;
+
+      // Check for iOS devices
+      if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
+        return 'https://apps.apple.com/app/id6499470032';
+      }
+      // Check for Android devices
+      else {
+        return 'https://play.google.com/store/apps/details?id=YOUR_PACKAGE_NAME'; // Replace YOUR_PACKAGE_NAME with your actual Package Name
+      }
+    },
+    storeIcon() {
+      let userAgent = navigator.userAgent || window.opera;
+
+      // Return appropriate icon names from Material Design Icons based on the device
+      if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
+        return 'mdi-apple'; // Apple icon for iOS devices
+      } else {
+        return 'mdi-android'; // Android icon for Android devices
+      }
+    }
   }
 }
 </script>
