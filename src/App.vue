@@ -152,7 +152,10 @@ function toggleTheme () {
 
 onMounted(() => {
   const savedTheme = localStorage.getItem('pesisnet-theme');
-  theme.global.name.value = savedTheme || 'dark';
+  const is_app = localStorage.getItem('pesisnet-app');
+
+  if(is_app) theme.global.name.value = 'light';
+  else theme.global.name.value = savedTheme || 'light';
 });
 </script>
 
