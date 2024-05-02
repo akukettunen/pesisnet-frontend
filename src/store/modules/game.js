@@ -398,6 +398,38 @@ const game = {
 
       return data
     },
+    stats_by_side: (_, getters) => (side) => {
+      if(!side) {
+        return {
+          runner_at_3: 0,
+          wtscore: 0,
+          walkscore: 0
+        }
+      }
+      let runner_at_3 = 0
+      let walkscore = 0
+      let wtscore = 0
+
+      const hits_mapped = getters.events.map(h => {
+        // const is_runner_at_three = h.events.some(e => e.texts.some(t => !!t.pointhitf || t.pointhitf == 0))
+        const event_side = getters.game.home.id == h.team ? 'home' : 'away'
+
+        if(event_side == side) return h.events.map(e => e.texts.filter(e => e.type == 'stat')).flat()
+        return []
+      })
+
+      hits_mapped.flat().forEach((e) => {
+        if(e['runner-at-3']) runner_at_3++
+        if(e['walkscore']) walkscore++
+        if(e['wtscore']) wtscore++
+      })
+      
+      return {
+        runner_at_3,
+        wtscore,
+        walkscore
+      }
+    },
     hits_by_player: (_, getters) => ({ player_id, player_number, side }) => {
       const hits = getters.events.filter(ev => {
         // ev.events[0].texts?.find(t => t.type == 'hit')?.hit
