@@ -199,8 +199,7 @@ export default {
       });
       next();
     });
-  },
-  mounted() {
+    
     this.initMaps()
 
     const is_app = localStorage.getItem('pesisnet-app');
@@ -244,6 +243,16 @@ export default {
 
       // Check for iOS devices
       if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
+        return true
+      }
+
+      return false
+    },
+    isAndroid() {
+      let userAgent = navigator.userAgent || window.opera;
+
+      // Check for android devices
+      if (/android/i.test(userAgent)) {
         return true
       }
 
