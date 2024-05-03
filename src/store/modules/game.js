@@ -1,4 +1,5 @@
 import a from '@/utils/axios'
+import axios from 'axios'
 import { nextTick } from 'vue';
 // import router from '@/router/index.js'
 
@@ -9,6 +10,7 @@ const game = {
     game_data: {},
     events: [],
     loading_game: false,
+    loading_events: false,
     loading_game_id: null, // this is always the latest fetched game id and only initially null
     finished: false,
     bases: [ 
@@ -49,6 +51,9 @@ const game = {
     SET_LOADING_GAME(state, val) {
       state.loading_game = val
     },
+    SET_LOADING_EVENTS(state, val) {
+      state.loading_events = val
+    },
     SET_LOADING_GAME_ID(state, val) {
       state.loading_game_id = val
     },
@@ -87,42 +92,80 @@ const game = {
     }
   },
   actions: {
-    getGameData({ commit, getters, dispatch }, { id, no_fefresh }) {
+    async getGameData({ commit, getters, dispatch }, { id, no_fefresh }) {
+      const starttime = Date.now()
+
       if(!no_fefresh) {
         commit('SET_LOADING_GAME_ID', id)
         commit('SET_LOADING_GAME', true)
         commit('RESET_GAME_DATA')
+        commit('SET_LOADING_EVENTS', true)
       }
 
-      a(`/games/${id}`)
+      let game;
+      await a(`/games/${id}/basic-data`)
+        .then(e => {
+          commit('SET_GAME', e.data.game)
+          game = e.data.game
+        })
+        .catch(e => {
+          console.log(e)
+        })
+
+      const date = game.date.split('T')[0]
+      await axios(`https://www.pesistulokset.fi/api/v1/matches-per-date?date=${date}&seasonSeries=${getters.game.series.id}`)
+        .then(e => {
+          const { data: { data, maps } } = e
+          let game = data.find(g => g.id == id)
+        
+          if(typeof game['home'] !== 'object') game['home'] = maps.team.find(t => t.id == game.home)['value']
+          if(typeof game['away'] !== 'object') game['away'] = maps.team.find(t => t.id == game.away)['value']
+        
+          commit('SET_GAME_DATA', game)
+          commit('SET_LOADING_GAME', false)
+        })
+        .catch(e => {
+          console.log('Error: ', e)
+        })
+        .finally(() => {
+          commit('SET_LOADING_GAME', false)
+        })
+
+      const halftime = Date.now()
+
+      axios(`https://www.pesistulokset.fi/api/v1/online/${id}/events`)
         .then(e => {
           if(getters.loading_game_id != id) return
-            const simulate = false
-          if(simulate) {
-            commit('SET_EVENTS_TO_BE_SIMULATED', e.data.events)
-            dispatch('startEventSimulation')
-          } else if(e.data.events.length > getters.events.length) {
-            commit('SET_EVENTS', e.data.events)
+          if(!e.data.events) {
+            commit('SET_EVENTS', [])
+            commit('SET_FINISHED', e.data.finished)
+            return
           }
-
-          commit('SET_GAME', e.data.game)
-          commit('SET_FINISHED', e.data.finished)
-          commit('SET_GAME_DATA', e.data.gameData)
+          // if(simulate) {
+          //   commit('SET_EVENTS_TO_BE_SIMULATED', e.data.events)
+          //   dispatch('startEventSimulation')
+          // } else 
+          if(e.data.events.length > getters.events.length) {
+            commit('SET_EVENTS', e.data.events)
+            commit('SET_FINISHED', e.data.finished)
+          }
 
           if(!no_fefresh) {
             nextTick(() => {
-              if(!getters.finished && getters.game_data.liveResult) {
+              if(!e.data.finished && getters.game_data.liveResult) {
                 dispatch('startEventPolling')
               }
             })
           }
-
+          commit('SET_LOADING_EVENTS', false)
         })
         .finally(() => {
-          if(getters.loading_game_id != id) return
-
-          commit('SET_LOADING_GAME', false)
+          commit('SET_LOADING_EVENTS', false)
         })
+      
+      const endtime = Date.now()
+
+      const time = endtime - starttime
     },
     eventRefresh({ getters, commit, dispatch }, new_event) {
       if(!(["Superpesis", "Talvisuper"]).includes(getters.game.series.level) && ( getters.game.series.level != "Ykköspesis" || getters.game.series.name != "Miehet")) {
@@ -232,6 +275,7 @@ const game = {
     game: state => state.game, 
     game_data: state => state.game_data, 
     loading_game: state => state.loading_game,
+    loading_events: state => state.loading_events,
     finished: state => state.finished,
     loading_game_id: state => state.loading_game_id,
     events_to_be_simulated: state => state.events_to_be_simulated,
@@ -387,10 +431,10 @@ const game = {
       return getters.game.away?.id
     },
     stats_by_hitter: (_, getters) => {
+      if(!getters.game_data.home || !getters.game_data.away) return []
       const home = getters.stat_points(getters.game_data.home.id)
       const away = getters.stat_points(getters.game_data.away.id)
 
-      // Tässä vituiksi
       const data = {
         home: getters.form_stats(home, 'home'),
         away: getters.form_stats(away, 'away')
@@ -455,6 +499,112 @@ const game = {
       })
 
       return hits_mapped
+    },
+    stats_table_v2: (_, getters) => side => {
+      if(!getters.game?.id) return { headers: [], data: [] }
+
+      const headers = [
+        { text: 'Pelaaja', key: 'player', lock: true, left: true },
+        { text: 'UP', key: 'outfield_pos', long_text: 'Ulkopelipaikka' },
+        { text: 'K', key: 'homeruns', long_text: 'Kunnarit' },
+        { text: 'L', key: 'score', long_text: 'Lyödyt' },
+        { text: 'T', key: 'ran_runs', long_text: 'Tuodut' },
+        { text: 'KL', key: 'pointhits', long_text: 'Kärkilyönnit / Kärkilyöntiyritykset' },
+        { text: '1%', key: 'pointhits0', long_text: 'Kärkilyönnit 0-til' },
+        { text: '2%', key: 'pointhits1', long_text: 'Kärkilyönnit 1-til' },
+        { text: '3%', key: 'pointhits2', long_text: 'Kärkilyönnit 2-til' },
+        { text: 'K%', key: 'pointhits3', long_text: 'Kärkilyönnit kotiin' },
+        { text: 'KL%', key: 'kl_percentage', long_text: 'Kärkilyöntiprosentti' },
+        { text: 'PMV', key: 'pmv', long_text: 'Palot mailan varressa' },
+      ]
+
+      if(!getters.game_data[side]) return []
+
+      let last_row = {
+        player: 'Yhteensä',
+        player_id: 'total',
+        outfield_pos: '-',
+        homeruns: 0,
+        score: 0,
+        ran_runs: 0,
+        kl_percentage: 0,
+        pmv: 0,
+        side,
+        pointhits: 0,
+        pointhitf: 0,
+        pointhits0: 0,
+        pointhitf0: 0,
+        pointhits1: 0,
+        pointhitf1: 0,
+        pointhits2: 0,
+        pointhitf2: 0,
+        pointhits3: 0,
+        pointhitf3: 0,
+      }
+
+      let stats = getters.form_stats(getters.stat_points(getters.game_data[side].id), side)
+      
+      const data = getters.game[side].players.map((player, i) => {
+        let player_stats = stats[`${player.id}_${side}`] || stats[`${player.number}_${side}`]
+        last_row = getters.handle_last_row({ last_row, player_stats })
+
+        return getters.factor_player_stats({ player, player_stats, i, side })
+      })
+
+      const tot_kl_percentage = last_row.pointhitf ? (last_row.pointhits / ( last_row.pointhits + last_row.pointhitf ) * 100 ).toFixed(0) : '-'
+      last_row['kl_percentage'] = tot_kl_percentage + '%'
+
+      let ns = ['', '0', '1', '2', '3']
+      ns.forEach(n => {
+        const tot = last_row['pointhits' + n] + last_row['pointhitf' + n]
+        if(tot == 0) return '-'
+        last_row['pointhits' + n] = `${last_row['pointhits' + n]}/${tot}`
+      })
+
+      return {
+        headers,
+        data: data.concat(last_row)
+      }
+    },
+    handle_last_row: () => ({ last_row, player_stats }) => {
+      last_row = {...last_row}
+      last_row['homeruns'] = last_row['homeruns'] + player_stats['homeruns'] 
+      last_row['pmv'] = last_row['pmv'] + player_stats['pmv'] 
+
+      let ns = ['', '0', '1', '2', '3']
+      ns.forEach(n => {
+        last_row['pointhits' + n] = last_row['pointhits' + n] + player_stats['pointhits' + n] 
+        last_row['pointhitf' + n] = last_row['pointhitf' + n] + player_stats['pointhitf' + n] 
+      })
+
+      return last_row
+    },
+    factor_player_stats: () => ({ player, player_stats, i, side }) => {
+      const kl = (player_stats.pointhits + player_stats.pointhitf) ? `${parseInt(((player_stats.pointhits / (player_stats.pointhits + player_stats.pointhitf)) * 100).toFixed(0))}%` : '-'
+
+      const hits = ['', '0', '1', '2', '3'].map(n => {
+        if( player_stats[`pointhitf${n}`] + player_stats[`pointhits${n}`] == 0 ) return '-'
+        return `${player_stats[`pointhits${n}`]}/${player_stats[`pointhitf${n}`] + player_stats[`pointhits${n}`]}`
+      })
+
+      return {
+        player: `${i + 1}. ${player.name}`,
+        outfield_pos: player.defensive_position.short_name || '-',
+        ...player_stats,
+        pointhits: hits[0],
+        pointhits0: hits[1],
+        pointhits1: hits[2],
+        pointhits2: hits[3],
+        pointhits3: hits[4],
+        score: player_stats.score || '-',
+        ran_runs: player_stats.ran_runs || '-',
+        homeruns: player_stats.homeruns || '-',
+        kl_percentage: kl,
+        player_id: player.id || player.number,
+        player_number: player.number,
+        side
+        // player
+      }
     },
     stats_table: (_, getters) => side => {
       if(!getters.game?.id) return { headers: [], data: [] }

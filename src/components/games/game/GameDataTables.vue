@@ -1,13 +1,13 @@
 <template>
   <v-row style="flex-direction: row;" class="my-5">
     <v-col v-for="side in ['home', 'away']" :key="`${side}-game-data-table-stats`" cols="12" md="6">
-      <GameExtraDatas :side="side"></GameExtraDatas>
+      <GameExtraDatas :loading="loading_events" :side="side"></GameExtraDatas>
       <v-skeleton-loader
         type="list-item-three-line	, list-item-three-line	, list-item-three-line	"
-        style="width: 100%; max-width: calc(100vw - 32px); justify-content: center; display: flex;"
-        :loading="loading_game"
+        style="width: 100%; max-width: calc(100vw - 36px); justify-content: center; display: flex;"
+        :loading="loading_events"
       >
-        <DataTable :unorderable="true" @cell-clicked="$emit('cell-clicked', $event)" :data="stats_table(side)" />
+        <DataTable :unorderable="true" @cell-clicked="$emit('cell-clicked', $event)" :data="stats_table_v2(side)" />
       </v-skeleton-loader>
       <Prizes :side="side"></Prizes>
     </v-col>
@@ -24,8 +24,8 @@ export default {
   components: { DataTable, Prizes, GameExtraDatas },
   computed: {
     ...mapGetters('game', [
-      'loading_game',
-      'stats_table'
+      'loading_events',
+      'stats_table_v2'
     ])
   }
 }

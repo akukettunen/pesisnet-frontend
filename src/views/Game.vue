@@ -1,6 +1,8 @@
 <template>
   <v-container fluid class="px-0" :style="`padding-top: ${$vuetify.display.mobile ? '0' : '74'}px;`" style="max-width: 1200px;">
-    <!-- {{ game_data }} -->
+    <!-- {{ game_data }}
+    <div>Game</div>
+    {{ game }} -->
     <v-sheet class="pa-2" style="height: 100%;">
       <GameHeader/>
       <!-- Fin {{ finished }} -->
@@ -30,7 +32,7 @@ import { mapActions, mapGetters, mapMutations } from 'vuex'
 export default {
   components: { GameHeader, GameBar, GameEvents, GameLiveBar, GameFieldDialog, GameDataTables },
   created() {
-    this.getGameData({ id: this.$route.params.id })
+    const time = this.getGameData({ id: this.$route.params.id })
   },
   data() {
     return {
@@ -41,7 +43,6 @@ export default {
   },
   methods: {
     handleCellClicked(e) {
-      console.log(e.row)
       this.hits = this.hits_by_player({ player_id: e.row.player_id, player_number: e.row.player_number, side: e.row.side })
       this.title = e.row.player
       this.SET_SHOW_FIELD(true)
@@ -72,7 +73,6 @@ export default {
     ])
   },
   unmounted() {
-    console.log("STOP POLLING EVENTS")
     this.stopEventPollingInterval()
   },
 }

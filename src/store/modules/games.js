@@ -49,13 +49,10 @@ const games = {
       commit('SET_GETTING_GAMES_FOR_DATE', date)
 
       const url = `https://www.pesistulokset.fi/api/v1/matches-per-date?date=${date}`
-      console.log(url)
       axios(url)
         .then(e => {
           if(date != getters.getting_games_for_date) return
-          console.log(e.data)
           const games = handleGamesData({ games: e.data.data, maps: e.data.maps })
-          console.log('handled games: ', games)
           commit('SET_DATE_GAMES', { organizers: games })
         })
         .catch(e => {
@@ -66,7 +63,8 @@ const games = {
           commit('SET_LOADING_GAMES', false)
         })
     },
-    initDate({ commit }) {
+    initDate({ commit, getters }) {
+      if(getters.date) return
       const date = router.currentRoute._value.query.date
       if(date) {
         commit('SET_DATE', date)

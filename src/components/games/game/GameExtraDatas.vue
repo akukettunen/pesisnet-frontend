@@ -1,20 +1,20 @@
 <template>
-  <div style="display: flex;">
+  <div v-if="!loading" style="display: flex;">
     <div>
       3-tilanteet
-      <v-chip class="sport-font" label>
+      <v-chip size="small" class="sport-font" label>
         {{ stats['runner_at_3'] }}
       </v-chip>
     </div>
     <div class="ml-5">
       Harhalla
-      <v-chip class="sport-font" label>
+      <v-chip size="small" class="sport-font" label>
         {{ stats['wtscore'] }}
       </v-chip>
     </div>
     <div class="ml-5">
       Vapaat
-      <v-chip class="sport-font" label>
+      <v-chip size="small" class="sport-font" label>
         {{ stats['walkscore'] }}
       </v-chip>
     </div>
@@ -24,7 +24,7 @@
 <script>
 import { mapGetters } from 'vuex'
 export default {
-  props: ['side'],
+  props: ['side', 'loading'],
   computed: {
     ...mapGetters('game', [
       'stats_by_side'

@@ -87,7 +87,7 @@ export default {
       hit = hit.hit
       return {
         x: parseFloat(hit.x) / 100 * this.width - 12.5,
-        y: parseFloat(hit.y) / 100 * this.height / 1.28
+        y: parseFloat(hit.y) / 100 * this.height / 1.1
       }
     },
     getHitColor(hit) {

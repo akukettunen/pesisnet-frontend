@@ -1,5 +1,5 @@
 <template>
-  <v-card flat class="px-2" @click="$router.push(`/games/${game.id}`)">
+  <v-card flat class="px-2" @click="openGame(game.id)">
     <v-divider></v-divider>
     <v-sheet class="d-flex">
       <!--
@@ -53,7 +53,7 @@
 import GameCardTeam from '@/components/games/GameCardTeam.vue'
 import PointBox from '@/components/games/game/PointBox.vue'
 import PointBoxes from '@/components/games/game/PointBoxes.vue'
-import { mapGetters } from 'vuex'
+import { mapGetters, mapMutations } from 'vuex'
 
 export default {
   components: { GameCardTeam, PointBox, PointBoxes },
@@ -65,7 +65,12 @@ export default {
     ]),
   },
   methods: {
-
+    ...mapMutations('game', [
+      'SET_GAME_DATA'
+    ]),
+    openGame() {
+      this.$router.push(`/games/${this.game.id}`)
+    }
   }
 }
 </script>
