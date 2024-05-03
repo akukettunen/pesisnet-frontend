@@ -107,22 +107,19 @@ const game = {
         .then(e => {
           commit('SET_GAME', e.data.game)
           game = e.data.game
+          
+          console.log('Game basic: ', ((Date.now() - starttime) / 1000).toFixed(2), "s")
         })
         .catch(e => {
           console.log(e)
         })
 
       const date = game.date.split('T')[0]
-      await axios(`https://www.pesistulokset.fi/api/v1/matches-per-date?date=${date}&seasonSeries=${getters.game.series.id}`)
-        .then(e => {
-          const { data: { data, maps } } = e
-          let game = data.find(g => g.id == id)
-        
-          if(typeof game['home'] !== 'object') game['home'] = maps.team.find(t => t.id == game.home)['value']
-          if(typeof game['away'] !== 'object') game['away'] = maps.team.find(t => t.id == game.away)['value']
-        
-          commit('SET_GAME_DATA', game)
+      a(`/games/${id}/game-data?date=${date}&seasonSeries=${game.series.id}`)
+        .then(c => {
+          commit('SET_GAME_DATA', c.data)
           commit('SET_LOADING_GAME', false)
+          console.log('Game other: ', ((Date.now() - starttime) / 1000).toFixed(2), "s")
         })
         .catch(e => {
           console.log('Error: ', e)
@@ -135,6 +132,7 @@ const game = {
 
       axios(`https://www.pesistulokset.fi/api/v1/online/${id}/events`)
         .then(e => {
+          console.log('Events got: ', ((Date.now() - starttime) / 1000).toFixed(2), "s")
           if(getters.loading_game_id != id) return
           if(!e.data.events) {
             commit('SET_EVENTS', [])
@@ -162,10 +160,6 @@ const game = {
         .finally(() => {
           commit('SET_LOADING_EVENTS', false)
         })
-      
-      const endtime = Date.now()
-
-      const time = endtime - starttime
     },
     eventRefresh({ getters, commit, dispatch }, new_event) {
       if(!(["Superpesis", "Talvisuper"]).includes(getters.game.series.level) && ( getters.game.series.level != "Ykköspesis" || getters.game.series.name != "Miehet")) {
