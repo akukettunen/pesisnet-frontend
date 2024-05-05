@@ -5,19 +5,19 @@
         :style="{ 
           'height': '50px',
           'width': '50px',
-          'background-image': `url('${player.image.medium}')`,
+          'background-image': `url('${player.image ? player.image.medium : ''}')`,
           'background-size': '170%', 
           'background-position': 'center top',
         }"
         class="my-avatar-img" 
-        v-if="player.image.medium" 
+        v-if="player.image" 
         width="40" 
         style="border-radius: 50%;" cover 
       />
       <v-icon size="30" v-else>mdi-account-outline</v-icon>
     </v-avatar>
     <div class="pr-3 pl-5 sport-font" :style="`color: ${$vuetify.theme.dark ? 'white' : 'black'}; font-size: 12px; border-radius: 5px; border: 2px solid lightgrey; background-color: white; white-space: nowrap; text-align: center; height: 20px; line-height: 15px; margin-left: -10px;`">
-      {{ player.first_name[0] }}. {{ player.last_name }}
+      {{ player_name }}
     </div>
     <!-- {{ player }} -->
   </div>
@@ -34,6 +34,10 @@ export default {
       'home_team_id',
       'away_team_id'
     ]),
+    player_name() {
+      if(!this.player) return ''
+      return `${this.player.first_name ? this.player.first_name[0] : ''}. ${ this.player.last_name }`
+    },
     player() {
       if(!this.game || !this.game['home']) return {}
       if(!this.game_data || !this.game_data.liveResult) return {}
