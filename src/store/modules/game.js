@@ -107,8 +107,6 @@ const game = {
         .then(e => {
           commit('SET_GAME', e.data.game)
           game = e.data.game
-          
-          console.log('Game basic: ', ((Date.now() - starttime) / 1000).toFixed(2), "s")
         })
         .catch(e => {
           console.log(e)
@@ -119,7 +117,6 @@ const game = {
         .then(c => {
           commit('SET_GAME_DATA', c.data)
           commit('SET_LOADING_GAME', false)
-          console.log('Game other: ', ((Date.now() - starttime) / 1000).toFixed(2), "s")
         })
         .catch(e => {
           console.log('Error: ', e)
@@ -132,7 +129,6 @@ const game = {
 
       axios(`https://www.pesistulokset.fi/api/v1/online/${id}/events`)
         .then(e => {
-          console.log('Events got: ', ((Date.now() - starttime) / 1000).toFixed(2), "s")
           if(getters.loading_game_id != id) return
           if(!e.data.events) {
             commit('SET_EVENTS', [])
@@ -540,7 +536,8 @@ const game = {
       
       const data = getters.game[side].players.map((player, i) => {
         let player_stats = stats[`${player.id}_${side}`] || stats[`${player.number}_${side}`]
-        last_row = getters.handle_last_row({ last_row, player_stats })
+
+        if(player_stats) last_row = getters.handle_last_row({ last_row, player_stats })
 
         return getters.factor_player_stats({ player, player_stats, i, side })
       })
@@ -561,9 +558,11 @@ const game = {
       }
     },
     handle_last_row: () => ({ last_row, player_stats }) => {
-      last_row = {...last_row}
+      last_row = { ...last_row }
       last_row['homeruns'] = last_row['homeruns'] + player_stats['homeruns'] 
       last_row['pmv'] = last_row['pmv'] + player_stats['pmv'] 
+      last_row['score'] = last_row['score'] + player_stats['score'] 
+      last_row['ran_runs'] = last_row['ran_runs'] + player_stats['ran_runs'] 
 
       let ns = ['', '0', '1', '2', '3']
       ns.forEach(n => {
@@ -574,6 +573,19 @@ const game = {
       return last_row
     },
     factor_player_stats: () => ({ player, player_stats, i, side }) => {
+      if(!player_stats) player_stats = {
+        pointhits: 0,
+        pointhitf: 0,
+        pointhits0: 0,
+        pointhitf0: 0,
+        pointhits1: 0,
+        pointhitf1: 0,
+        pointhits2: 0,
+        pointhitf2: 0,
+        pointhits3: 0,
+        pointhitf3: 0,
+      }
+      
       const kl = (player_stats.pointhits + player_stats.pointhitf) ? `${parseInt(((player_stats.pointhits / (player_stats.pointhits + player_stats.pointhitf)) * 100).toFixed(0))}%` : '-'
 
       const hits = ['', '0', '1', '2', '3'].map(n => {
@@ -596,7 +608,8 @@ const game = {
         kl_percentage: kl,
         player_id: player.id || player.number,
         player_number: player.number,
-        side
+        side,
+        pmv: player_stats.pmv || 0
         // player
       }
     },
