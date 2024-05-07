@@ -3,12 +3,18 @@
     <!-- {{ game_data }}
     <div>Game</div>
     {{ game }} -->
-    <v-sheet class="pa-2" style="height: 100%;">
+    <v-sheet 
+      v-touch="{ 
+        right: swipeHandler
+      }"
+      class="pa-2" 
+      style="height: 100%;"
+    >
       <GameHeader/>
       <!-- Fin {{ finished }} -->
       <!-- {{ events }} -->
       <div></div>
-      <GameLiveBar/>
+      <GameLiveBar />
       <v-expand-transition>
         <GameEvents
           v-if="events && events.length"
@@ -46,6 +52,9 @@ export default {
       this.hits = this.hits_by_player({ player_id: e.row.player_id, player_number: e.row.player_number, side: e.row.side })
       this.title = e.row.player
       this.SET_SHOW_FIELD(true)
+    },
+    swipeHandler(e) {
+      this.$router.push('/games')
     },
     ...mapActions('game', [
       'getGameData',

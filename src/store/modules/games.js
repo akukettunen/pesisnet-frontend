@@ -10,7 +10,8 @@ const games = {
     loading_games: false,
     date: null,
     game_dates: null,
-    getting_games_for_date: null
+    getting_games_for_date: null,
+    last_date_got: null
   }),
   mutations: {
     SET_DATE_GAMES(state, games) {
@@ -27,6 +28,9 @@ const games = {
     },
     SET_GETTING_GAMES_FOR_DATE(state, val) {
       state.getting_games_for_date = val
+    },
+    SET_LAST_DATE_GOT(state, val) {
+      state.last_date_got = val
     }
   },
   actions: {
@@ -45,6 +49,8 @@ const games = {
     getDateGames({ commit, getters }, date) {
       if(!date) date = getters.date
 
+      if(getters.date == getters.last_date_got && getters.date_games && getters.date_games.organizers) return
+
       commit('SET_LOADING_GAMES', true)
       commit('SET_GETTING_GAMES_FOR_DATE', date)
 
@@ -54,6 +60,7 @@ const games = {
           if(date != getters.getting_games_for_date) return
           const games = handleGamesData({ games: e.data.data, maps: e.data.maps })
           commit('SET_DATE_GAMES', { organizers: games })
+          commit('SET_LAST_DATE_GOT', date)
         })
         .catch(e => {
           alert(e)
@@ -118,6 +125,7 @@ const games = {
     loading_games: state => state.loading_games,
     getting_games_for_date: state => state.getting_games_for_date,
     game_dates: state => state.game_dates,
+    last_date_got: state => state.last_date_got,
     game_dates_formal: state => state.game_dates.map(d => {
       const date = new Date(d)
       return date

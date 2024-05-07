@@ -10,6 +10,10 @@ const routes = [
         path: '',
         name: 'Games',
         component: () => import('@/views/Games.vue'),
+        meta: {
+          index: 0,
+          transition: 'slide'
+        }
       },
     ],
   },
@@ -134,7 +138,10 @@ const routes = [
         name: 'Game',
         component: () => import('@/views/Game.vue'),
         meta: {
-          show_news_bar: false
+          show_news_bar: false,
+          index: 1,
+          transition: 'slide',
+          backButton: true
         }
       },
     ],
@@ -150,9 +157,16 @@ const router = createRouter({
   routes,
 })
 
-router.beforeEach((to, from) => {
-  if(to.path === '/') return { path: '/games' }
-  if(to.path === '/stats') return { path: '/stats/player-cards' }
+router.beforeEach((to, from, next) => {
+  const toIndex = to.meta.index || 0;
+
+  const fromIndex = from.meta.index || 0;
+  const direction = toIndex > fromIndex ? 'right' : 'left';
+  to.meta.transitionName = direction === 'right' ? 'slide-right' : 'slide-left';
+
+  if(to.path === '/') return next({ path: '/games' })
+  if(to.path === '/stats') return next({ path: '/stats/player-cards' })
+  next();
 })
 
 export default router

@@ -21,7 +21,12 @@
             :sort="sort"
           />
         </div>
-        <div class="dt-table-scroll">
+        <div 
+          @touchstart.native.stop
+          @touchmove.native.stop
+          @touchend.native.stop
+          class="dt-table-scroll"
+        >
           <data-table-column
             @cell-clicked="$emit('cell-clicked', $event)"
             @sort="handleSort($event)" 

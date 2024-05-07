@@ -4,15 +4,17 @@
       <v-icon>mdi-chevron-left</v-icon>
     </v-btn>
     <v-btn>
-      {{ pretty_date }}
+      {{ format(date) }}
       <v-menu v-model="open" activator="parent" :close-on-content-click="false">
         <v-card max-width="600">
           <v-date-picker
             :events="game_dates_formal"
+            :first-day-of-week="1"
             :model-value="date_formal"
             :month="month_index"
             @update:modelValue="setDateFormal($event); open = false;"
             hide-header
+            :show-adjacent-month="true"
           >
           </v-date-picker>
         </v-card>
@@ -28,6 +30,8 @@
 
 <script>
 import { mapActions, mapGetters, mapMutations } from 'vuex'
+import date from 'date-and-time'
+
 export default {
   data: () => ({
     open: false
@@ -56,7 +60,15 @@ export default {
       'getDateGames',
       'nextDay',
       'previousDay'
-    ])
+    ]),
+    format(d) {
+      const diff = Math.round(date.subtract(new Date(), new Date(d)).toDays())
+      if(diff == '2') return 'Eilen'
+      if(diff == '1') return 'Tänään'
+      if(diff == '0') return 'Huomenna'
+
+      return date.format(new Date(d), 'DD.MM.YY')
+    },
   }
 }
 </script>

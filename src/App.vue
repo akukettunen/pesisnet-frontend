@@ -1,5 +1,26 @@
 <template>
-  <v-container fluid :style="`padding: 0; padding-bottom: ${$vuetify.display.mobile ? '80' : '0'}px;`">
+  <v-container fluid :style="`position: relative; padding: 0; padding-bottom: ${$vuetify.display.mobile ? '80' : '0'}px;`">
+    <v-overlay
+      scroll-strategy="none"
+      :disabled="true"
+      :scrim="false"
+      opacity="0"
+      :model-value="true" 
+      v-if="$route.meta.backButton && !$vuetify.display.mobile"
+      style="
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+      "
+    >
+      <v-btn
+        @click="$router.push('/games')"
+        class="mb-5 ml-4"
+        style="z-index: 1;"
+        icon="mdi-arrow-left"
+      >
+      </v-btn>
+    </v-overlay>
     <v-layout>
       <v-app-bar v-if="!$vuetify.display.mobile" color="primary-darken-1" name="app-bar" :elevation="$route.meta.show_news_bar ? '0' : '2'">
         <v-app-bar-title class="d-flex" v-if="!$vuetify.display.mobile" style="flex-shrink: 1; flex-direction: column;">
@@ -25,7 +46,7 @@
             v-for="btn in app_bar_buttons"
             :key="btn.icon"
             style="height: 100%;"
-            :active="$route.path.includes(btn.route)"
+            :active="$route.path.includes(btn.route) && !btn.back"
             color="white"
             class="mr-3"
             :class="{ 'px-4' : !$vuetify.display.mobile }"
@@ -117,7 +138,7 @@
             v-for="btn in app_bar_buttons"
             :key="btn.icon + 'main'"
             style="height: 100%;"
-            :active="$route.path.includes(btn.route)"
+            :active="$route.path.includes(btn.route) && !btn.back"
             class="mr-3"
             :class="{ 'px-4' : !$vuetify.display.mobile }"
             :size="$vuetify.display.mobile ? 'x-small' : ''"
@@ -132,8 +153,9 @@
           </v-btn>
         </v-bottom-navigation>
       </v-snackbar>
-      
-      <router-view />
+      <!-- <transition :name="$route.meta.transitionName" mode="out-in"> -->
+        <router-view />
+      <!-- </transition> -->
     </v-layout>
     <v-dialog persistent bottom max-width="800" :model-value="show_app_banner" location="bottom">
       <v-card class="d-flex pa-5 pb-0">
@@ -218,11 +240,6 @@ export default {
     }
   },
   data: () => ({
-    app_bar_buttons: [
-      { text: 'Pelit', text_mobile: "Pelit", icon: 'mdi-play-box-outline', route: '/games' },
-      { text: 'Uutiset & Some', text_mobile: "Uutiset", icon: 'mdi-newspaper-variant-outline', route: '/news' },
-      { text: 'Data & Tilastot', text_mobile: "Data", icon: 'mdi-database-outline', route: '/stats' },
-    ],
     show_app_banner: false
   }),
   methods: {
@@ -238,6 +255,16 @@ export default {
       'news_buttons',
       'current_url',
     ]),
+    app_bar_buttons() {
+      const back = { back: true, text: 'Takaisin', text_mobile: "Takaisin", icon: 'mdi-arrow-left', route: '/games' }
+      const game = { text: 'Pelit', text_mobile: "Pelit", icon: 'mdi-play-box-outline', route: '/games' }
+      const button = this.$vuetify.display.mobile && this.$route.meta.backButton ? back : game
+      return [
+        button,
+        { text: 'Uutiset & Some', text_mobile: "Uutiset", icon: 'mdi-newspaper-variant-outline', route: '/news' },
+        { text: 'Data & Tilastot', text_mobile: "Data", icon: 'mdi-database-outline', route: '/stats' },
+      ]
+    },
     isApple() {
       let userAgent = navigator.userAgent || window.opera;
 
@@ -288,6 +315,39 @@ export default {
 * {
   padding: 0;
   margin: 0;
+}
+
+/* Styles for entering and leaving transitions */
+.slide-right-enter-active, .slide-right-leave-active,
+.slide-left-enter-active, .slide-left-leave-active {
+  transition: transform 0.3s ease-in-out;
+}
+
+/* Initial state for incoming "right" transition (new page comes in from right) */
+.slide-right-enter-from {
+  transform: translateX(100%);
+}
+
+/* End state for leaving "right" transition (current page exits to left) */
+.slide-right-leave-to {
+  transform: translateX(-100%);
+}
+
+/* Initial state for incoming "left" transition (new page comes in from left) */
+.slide-left-enter-from {
+  transform: translateX(-100%);
+}
+
+/* End state for leaving "left" transition (current page exits to right) */
+.slide-left-leave-to {
+  transform: translateX(100%);
+}
+
+/* Positioning rules to keep transitions smooth */
+.slide-right-enter-active, .slide-right-leave-active,
+.slide-left-enter-active, .slide-left-leave-active {
+  position: absolute;
+  width: 100%;
 }
 
 .vs__dropdown-menu {

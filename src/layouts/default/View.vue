@@ -1,6 +1,8 @@
 <template>
   <v-main>
-    <router-view />
+    <!-- <transition :name="$route.meta.transitionName" mode="out-in"> -->
+      <router-view />
+    <!-- </transition> -->
   </v-main>
 </template>
 
