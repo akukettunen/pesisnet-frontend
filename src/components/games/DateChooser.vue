@@ -61,13 +61,14 @@ export default {
       'nextDay',
       'previousDay'
     ]),
-    format(d) {
-      const diff = Math.round(date.subtract(new Date(), new Date(d)).toDays())
+    format() {
+      const diff = Math.floor(date.subtract(new Date(), new Date(this.date)).toDays())
+
       if(diff == '1') return 'Eilen'
       if(diff == '0') return 'Tänään'
       if(diff == '-1') return 'Huomenna'
 
-      return date.format(new Date(d), 'DD.MM.YY')
+      return date.format(new Date(this.date), 'DD.MM.YY')
     },
   }
 }
