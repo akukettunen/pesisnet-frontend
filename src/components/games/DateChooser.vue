@@ -63,9 +63,9 @@ export default {
     ]),
     format(d) {
       const diff = Math.round(date.subtract(new Date(), new Date(d)).toDays())
-      if(diff == '2') return 'Eilen'
-      if(diff == '1') return 'Tänään'
-      if(diff == '0') return 'Huomenna'
+      if(diff == '1') return 'Eilen'
+      if(diff == '0') return 'Tänään'
+      if(diff == '-1') return 'Huomenna'
 
       return date.format(new Date(d), 'DD.MM.YY')
     },
