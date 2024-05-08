@@ -1,6 +1,7 @@
 import a from '@/utils/axios'
 import axios from 'axios'
 import { nextTick } from 'vue';
+import date from 'date-and-time'
 // import router from '@/router/index.js'
 
 const game = {
@@ -10,6 +11,7 @@ const game = {
     game_data: {},
     events: [],
     loading_game: false,
+    latest_events_date: null,
     loading_events: false,
     loading_game_id: null, // this is always the latest fetched game id and only initially null
     finished: false,
@@ -44,6 +46,9 @@ const game = {
     },
     SET_EVENTS(state, val) {
       state.events = val
+    },
+    ADD_EVENTS(state, val) {
+      state.events = [...state.events].concat(val)
     },
     SET_GAME_DATA(state, val) {
       state.game_data = val
@@ -89,12 +94,13 @@ const game = {
     },
     SET_SHOW_FIELD(state, val) {
       state.show_field = val
+    },
+    SET_LATEST_EVENTS_DATE(state, val) {
+      state.latest_events_date = val
     }
   },
   actions: {
     async getGameData({ commit, getters, dispatch }, { id, no_fefresh }) {
-      const starttime = Date.now()
-
       if(!no_fefresh) {
         commit('SET_LOADING_GAME_ID', id)
         commit('SET_LOADING_GAME', true)
@@ -112,8 +118,8 @@ const game = {
           console.log(e)
         })
 
-      const date = game.date.split('T')[0]
-      a(`/games/${id}/game-data?date=${date}&seasonSeries=${game.series.id}`)
+      const d = game.date.split('T')[0]
+      a(`/games/${id}/game-data?date=${d}&seasonSeries=${game.series.id}`)
         .then(c => {
           commit('SET_GAME_DATA', c.data)
           commit('SET_LOADING_GAME', false)
@@ -125,12 +131,15 @@ const game = {
           commit('SET_LOADING_GAME', false)
         })
 
-      const halftime = Date.now()
-
-      axios(`https://www.pesistulokset.fi/api/v1/online/${id}/events`)
+      if(!getters.latest_events_date) commit('SET_LATEST_EVENTS_DATE', new Date())
+      const time = date.format(getters.latest_events_date, 'YYYY-MM-DDTHH:mm:ssZZ').replace('+', '%2B')
+      let url;
+      if(no_fefresh) url = `https://www.pesistulokset.fi/api/v1/online/${id}/events?after=${time}`
+      else url = `https://www.pesistulokset.fi/api/v1/online/${id}/events`
+      axios(url)
         .then(e => {
-          if(getters.loading_game_id != id) return
-          if(!e.data.events) {
+          if(getters.loading_game_id != id && !no_fefresh) return
+          if(!e.data.events && !no_fefresh) {
             commit('SET_EVENTS', [])
             commit('SET_FINISHED', e.data.finished)
             return
@@ -139,14 +148,17 @@ const game = {
           //   commit('SET_EVENTS_TO_BE_SIMULATED', e.data.events)
           //   dispatch('startEventSimulation')
           // } else 
-          if(e.data.events.length > getters.events.length) {
+          if(no_fefresh) {
+            if(e.data.events.length) commit('SET_LATEST_EVENTS_DATE', new Date())
+            commit('ADD_EVENTS', e.data.events)
+          } else if(e.data.events.length > getters.events.length) {
             commit('SET_EVENTS', e.data.events)
             commit('SET_FINISHED', e.data.finished)
           }
 
           if(!no_fefresh) {
             nextTick(() => {
-              if(!e.data.finished && getters.game_data.liveResult) {
+              if(!e.data.finished) {
                 dispatch('startEventPolling')
               }
             })
@@ -263,6 +275,7 @@ const game = {
   },
   getters: {
     game: state => state.game, 
+    latest_events_date: state => state.latest_events_date,
     game_data: state => state.game_data, 
     loading_game: state => state.loading_game,
     loading_events: state => state.loading_events,
