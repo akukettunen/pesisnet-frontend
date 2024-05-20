@@ -108,6 +108,7 @@ const game = {
         commit('SET_LOADING_EVENTS', true)
       }
 
+      // get basic game data
       let game;
       await a(`/games/${id}/basic-data`)
         .then(e => {
@@ -131,8 +132,8 @@ const game = {
           commit('SET_LOADING_GAME', false)
         })
 
-      if(!getters.latest_events_date) commit('SET_LATEST_EVENTS_DATE', new Date())
-      const time = date.format(getters.latest_events_date, 'YYYY-MM-DDTHH:mm:ssZZ').replace('+', '%2B')
+      if(!getters.latest_events_date || !no_fefresh) commit('SET_LATEST_EVENTS_DATE', new Date())
+      const time = date.format((getters.latest_events_date || new Date()), 'YYYY-MM-DDTHH:mm:ssZZ').replace('+', '%2B')
       let url;
       if(no_fefresh) url = `https://www.pesistulokset.fi/api/v1/online/${id}/events?after=${time}`
       else url = `https://www.pesistulokset.fi/api/v1/online/${id}/events`

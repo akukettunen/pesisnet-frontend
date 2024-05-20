@@ -49,7 +49,12 @@ const games = {
     getDateGames({ commit, getters }, date) {
       if(!date) date = getters.date
 
-      if(getters.date == getters.last_date_got && getters.date_games && getters.date_games.organizers) return
+      // if the days games have been fetched recently, just skip
+      // if(
+      //      getters.date == getters.last_date_got 
+      //   && getters.date_games
+      //   && getters.date_games.organizers
+      // ) return
 
       commit('SET_LOADING_GAMES', true)
       commit('SET_GETTING_GAMES_FOR_DATE', date)
