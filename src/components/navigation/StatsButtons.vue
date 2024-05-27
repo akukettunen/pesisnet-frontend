@@ -3,9 +3,12 @@
     <v-chip variant="text" size="x-small" style="bottom: -16px; left: calc(50% - 53px); position: absolute; text-align: center;" v-if="btn.coming_soon">
       Tulossa toukokuussa!
     </v-chip>
+    <v-chip variant="text" size="x-small" style="bottom: -16px; left: calc(50% - 25px); position: absolute; text-align: center;" v-if="btn.closed">
+      Suljettu
+    </v-chip>
     <v-btn
       style="align-self: center;"
-      :disabled="btn.coming_soon"
+      :disabled="btn.coming_soon || btn.closed"
       :variant="$route.path.includes(btn.path) ? 'outlined' : 'text'"
       @click="$router.push({ path: `/stats${btn.path}` })"
       :size="$vuetify.display.mobile ? 'x-small' : 'small'"
@@ -34,9 +37,9 @@ export default {
       { text: 'Tuodut', path: '/runs', active: false, dropdown: false },
       { text: 'Kärkilyönnit', path: '/karkilyonnit', active: false, dropdown: false },
       { text: 'KL pesänväleittäin', path: '/hps-by-base', active: false, dropdown: false, tooltip: "Kärkilyönnit pesänväleittäin" },
-      { text: 'TOP Etenijät', path: '/top-runners', active: false, dropdown: false },
+      { text: 'TOP Etenijät', path: '/top-runners', active: false, dropdown: false, closed: true },
       // { text: 'Otteluohjelmat', path: '/programmes', active: false, dropdown: false },
-      { text: 'Lukkarivertailu', path: '/pitchers', active: false, dropdown: false},
+      { text: 'Lukkarivertailu', path: '/pitchers', active: false, dropdown: false, closed: true },
       { text: 'Ulkopelitilastot', path: '/outfield', active: false, dropdown: false, coming_soon: true },
       { text: 'UP-Suoritusajat', path: '/performance-times', active: false, dropdown: false, coming_soon: true },
     ],
