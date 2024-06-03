@@ -95,22 +95,22 @@ const routes = [
           show_data_bar: true,
         }
       },
-      // {
-      //   path: 'pitchers',
-      //   name: 'Pitchers',
-      //   component: () => import('@/views/data/Pitchers.vue'),
-      //   meta: {
-      //     show_data_bar: true,
-      //   }
-      // },
-      // {
-      //   path: 'top-runners',
-      //   name: 'TopRunners',
-      //   component: () => import('@/views/data/TopRunners.vue'),
-      //   meta: {
-      //     show_data_bar: true,
-      //   }
-      // },
+      {
+        path: 'pitchers',
+        name: 'Pitchers',
+        component: () => import('@/views/data/Pitchers.vue'),
+        meta: {
+          show_data_bar: true,
+        }
+      },
+      {
+        path: 'top-runners',
+        name: 'TopRunners',
+        component: () => import('@/views/data/TopRunners.vue'),
+        meta: {
+          show_data_bar: true,
+        }
+      },
     ],
   },
   {
