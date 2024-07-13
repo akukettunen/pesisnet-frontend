@@ -9,6 +9,16 @@
       :loading="loading"
     >
       <div class="dt-table">
+        <div class="dt-table-locked" v-if="order">
+          <data-table-column
+            @cell-clicked="$emit('cell-clicked', $event)"
+            :header="{key: 'position', text: '#'}"
+            :data="sortedData.data" 
+            key="positionheader"
+            :density="density"
+            :sort="sort"
+          />
+        </div>
         <div class="dt-table-locked" >
           <data-table-column
             @cell-clicked="$emit('cell-clicked', $event)"
@@ -70,7 +80,7 @@
 import DataTableColumn from './DataTableColumn.vue'
 export default {
   components: { DataTableColumn },
-  props: ['data', 'density', 'loading', 'unorderable'],
+  props: ['data', 'density', 'loading', 'unorderable', 'order'],
   data: () => ({
     sort: {
       key: null,
@@ -108,7 +118,7 @@ export default {
   },
   computed: {
     sortedData() {
-      if(!this.sort.key) return this.data
+      if(!this.sort.key) return { ...this.data, data: this.data.data.map((d, i) => { return {...d, position: i + 1} })}
 
       // return the data sorted by sort key descending
       let sort_data = [...this.data.data]
@@ -126,7 +136,7 @@ export default {
         return (- c + d) * (this.sort.desc ? 1 : -1)
       })
 
-      return { ...this.data, data: sort_data }
+      return { ...this.data, data: sort_data.map((d, i) => {return { ...d, position: i + 1 }}) }
     },
     locked_headers() {
       let locked = []

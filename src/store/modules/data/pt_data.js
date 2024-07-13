@@ -1,4 +1,3 @@
-import a from '@/utils/axios'
 import axios from 'axios'
 
 const standings = {

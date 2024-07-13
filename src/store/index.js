@@ -8,6 +8,7 @@ import news from './modules/news.js'
 import rss from './modules/rss.js'
 import pt_data from './modules/data/pt_data.js'
 import standings from './modules/data/standings.js'
+import outfield from './modules/data/outfield.js'
 
 export default createStore({
   modules: {
@@ -18,7 +19,8 @@ export default createStore({
     standings,
     news,
     pt_data,
-    rss
+    rss,
+    outfield
   }
 })
 

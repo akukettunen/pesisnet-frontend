@@ -111,6 +111,14 @@ const routes = [
           show_data_bar: true,
         }
       },
+      {
+        path: 'outfield',
+        name: 'Outfield',
+        component: () => import('@/views/data/Outfield.vue'),
+        meta: {
+          show_data_bar: true,
+        }
+      },
     ],
   },
   {
