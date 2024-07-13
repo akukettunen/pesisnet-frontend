@@ -1,6 +1,6 @@
 <template>
   <PesisData 
-    specifier="lyodyt"
+    specifier="karkilyonnit"
     :formDataFunction="formTableData"
   ></PesisData>
 </template>
