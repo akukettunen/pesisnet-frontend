@@ -37,11 +37,11 @@ export default {
       { text: 'Tuodut', path: '/runs', active: false, dropdown: false },
       { text: 'Kärkilyönnit', path: '/karkilyonnit', active: false, dropdown: false },
       { text: 'KL pesänväleittäin', path: '/hps-by-base', active: false, dropdown: false, tooltip: "Kärkilyönnit pesänväleittäin" },
-      { text: 'TOP Etenijät', path: '/top-runners', active: false, dropdown: false, closed: false },
+      { closed: true, text: 'TOP Etenijät', path: '/top-runners', active: false, dropdown: false, closed: false },
       // { text: 'Otteluohjelmat', path: '/programmes', active: false, dropdown: false },
-      { text: 'Lukkarivertailu', path: '/pitchers', active: false, dropdown: false, closed: false },
-      { text: 'Ulkopelitilastot', path: '/outfield', active: false, dropdown: false, coming_soon: false },
-      { text: 'UP-Suoritusajat', path: '/performance-times', active: false, dropdown: false, coming_soon: true },
+      { closed: true, text: 'Lukkarivertailu', path: '/pitchers', active: false, dropdown: false, closed: false },
+      { closed: true, text: 'Ulkopelitilastot', path: '/outfield', active: false, dropdown: false, coming_soon: false },
+      { closed: true, text: 'UP-Suoritusajat', path: '/performance-times', active: false, dropdown: false, coming_soon: true },
     ],
   })
 }
